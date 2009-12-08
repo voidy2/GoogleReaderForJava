@@ -39,7 +39,7 @@ public class GoogleReaderAPI {
     System.out.println(sid);
     System.out.println(t_token);
     //System.out.println(this.getUnreadCount());
-   this.getUnreadFeed();
+    this.getUnreadFeed();
   }
 
   private void loginAuth() {
@@ -55,7 +55,7 @@ public class GoogleReaderAPI {
       String param = StringUtils.join(params, "&");
       NetworkAccess na = new NetworkAccess(URI_LOGIN, "POST", param);
       BufferedReader in =
-              new BufferedReader(new InputStreamReader(na.access()));
+                     new BufferedReader(new InputStreamReader(na.access()));
       String line;
       while ( (line = in.readLine()) != null ) {
         String response = line.substring(0, 4);
@@ -76,9 +76,9 @@ public class GoogleReaderAPI {
     try {
       String url = URI_PREFIXE_API + API_TOKEN;
       NetworkAccess na =
-              new NetworkAccess(url, "GET", null, "Cookie", "SID=" + sid);
+                    new NetworkAccess(url, "GET", null, "Cookie", "SID=" + sid);
       BufferedReader in =
-              new BufferedReader(new InputStreamReader(na.access()));
+                     new BufferedReader(new InputStreamReader(na.access()));
       String line;
       while ( (line = in.readLine()) != null ) {
         this.t_token = line;
@@ -92,9 +92,9 @@ public class GoogleReaderAPI {
   public int getUnreadCount() {
     int unreadCount = 0;
     try {
-      String url  = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
+      String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
       NetworkAccess na =
-              new NetworkAccess(url, "GET", null,
+                    new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
       DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = dbfactory.newDocumentBuilder();
@@ -118,7 +118,7 @@ public class GoogleReaderAPI {
     try {
       String url = "http://www.google.com/reader/atom/user/02449446468507871574/state/com.google/reading-list";
       NetworkAccess na =
-              new NetworkAccess(url, "GET", null,
+                    new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
       DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = dbfactory.newDocumentBuilder();
