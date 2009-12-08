@@ -1,5 +1,6 @@
 package googlereader;
 
+import static googlereader.Const.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +24,6 @@ public class GoogleReaderAPI {
 
   private String userId;
   private String password;
-  private int userIdNum;
   private String sid;
   private String t_token;
 
@@ -39,7 +39,7 @@ public class GoogleReaderAPI {
     System.out.println(sid);
     System.out.println(t_token);
     //System.out.println(this.getUnreadCount());
-   this.getUnreadFeed();
+    this.getUnreadFeed();
   }
 
   private void loginAuth() {
@@ -53,10 +53,9 @@ public class GoogleReaderAPI {
                           "Passwd=" + URLEncoder.encode(password, "UTF-8"),
                           "service=reader" };
       String param = StringUtils.join(params, "&");
-      String url = "https://www.google.com/accounts/ClientLogin";
-      NetworkAccess na = new NetworkAccess(url, "POST", param);
+      NetworkAccess na = new NetworkAccess(URI_LOGIN, "POST", param);
       BufferedReader in =
-              new BufferedReader(new InputStreamReader(na.access()));
+                     new BufferedReader(new InputStreamReader(na.access()));
       String line;
       while ( (line = in.readLine()) != null ) {
         String response = line.substring(0, 4);
@@ -75,11 +74,11 @@ public class GoogleReaderAPI {
 
   private void setT_Token() {
     try {
-      String url = "http://www.google.com/reader/api/0/token";
+      String url = URI_PREFIXE_API + API_TOKEN;
       NetworkAccess na =
-              new NetworkAccess(url, "GET", null, "Cookie", "SID=" + sid);
+                    new NetworkAccess(url, "GET", null, "Cookie", "SID=" + sid);
       BufferedReader in =
-              new BufferedReader(new InputStreamReader(na.access()));
+                     new BufferedReader(new InputStreamReader(na.access()));
       String line;
       while ( (line = in.readLine()) != null ) {
         this.t_token = line;
@@ -93,9 +92,9 @@ public class GoogleReaderAPI {
   public int getUnreadCount() {
     int unreadCount = 0;
     try {
-      String url = "http://www.google.com/reader/api/0/unread-count?all=true";
+      String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
       NetworkAccess na =
-              new NetworkAccess(url, "GET", null,
+                    new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
       DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = dbfactory.newDocumentBuilder();
@@ -117,9 +116,9 @@ public class GoogleReaderAPI {
   public void getUnreadFeed() {
     int unreadCount = 0;
     try {
-      String url = "http://www.google.com/reader/atom/user/02449446468507871574/state/com.google/reading-list";
+      String url = URI_PREFIXE_ATOM +ATOM_STATE_READING_LIST;
       NetworkAccess na =
-              new NetworkAccess(url, "GET", null,
+                    new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
       DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = dbfactory.newDocumentBuilder();

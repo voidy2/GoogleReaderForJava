@@ -1,3 +1,4 @@
 userdata.txt
 build/
 dist/
+*.properties
