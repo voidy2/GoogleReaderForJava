@@ -116,7 +116,7 @@ public class GoogleReaderAPI {
   public void getUnreadFeed() {
     int unreadCount = 0;
     try {
-      String url = "http://www.google.com/reader/atom/user/02449446468507871574/state/com.google/reading-list";
+      String url = URI_PREFIXE_ATOM +ATOM_STATE_READING_LIST;
       NetworkAccess na =
                     new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
