@@ -89,6 +89,10 @@ public class GoogleReaderAPI {
     }
   }
 
+  public long getTimestamp() {
+    return System.currentTimeMillis();
+  }
+
   public int getUnreadCount() {
     int unreadCount = 0;
     try {
@@ -116,7 +120,7 @@ public class GoogleReaderAPI {
   public void getUnreadFeed() {
     int unreadCount = 0;
     try {
-      String url = URI_PREFIXE_ATOM +ATOM_STATE_READING_LIST;
+      String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
       NetworkAccess na =
                     new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
