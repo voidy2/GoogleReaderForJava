@@ -129,6 +129,8 @@ public class GoogleReaderAPI {
       Document doc = builder.parse(na.access());
       Element root = doc.getDocumentElement();
       dispDom(root, 0);
+      Entries entries = new Entries(root);
+      
       //System.out.println(root.getFirstChild().getAttributes().item(0));
       //System.out.println(root.getElementsByTagName("list").item(0).getNodeName());
     } catch ( ParserConfigurationException ex ) {
