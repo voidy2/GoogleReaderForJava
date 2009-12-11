@@ -11,8 +11,16 @@ public class Entries {
   String title;
   List<Feed> feedList;
   public Entries(Node root) {
-     String len = root.getChildNodes().item(3).getFirstChild().getNodeValue();
-     System.out.println(len);
+     int len = root.getChildNodes().getLength();
+     for(int i=0;i<len;i++){
+       Node node = root.getChildNodes().item(i);
+       if(node.hasChildNodes()){
+         if(node.getNodeName().equals("title")){
+           title = node.getFirstChild().getNodeValue();
+         }
+       }
+     }
+     System.out.println(title);
   }
 
 }
