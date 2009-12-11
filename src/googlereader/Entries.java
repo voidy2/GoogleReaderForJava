@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
  */
 public class Entries {
   String title;
+  String updated;
   List<Feed> feedList;
   public Entries(Node root) {
      int len = root.getChildNodes().getLength();
@@ -18,9 +19,13 @@ public class Entries {
          if(node.getNodeName().equals("title")){
            title = node.getFirstChild().getNodeValue();
          }
+         if(node.getNodeName().equals("updated")){
+           updated = node.getFirstChild().getNodeValue();
+         }
        }
      }
      System.out.println(title);
+     System.out.println(updated);
   }
 
 }
