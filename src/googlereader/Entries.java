@@ -1,5 +1,6 @@
 package googlereader;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Node;
 
@@ -10,17 +11,22 @@ import org.w3c.dom.Node;
 public class Entries {
   String title;
   String updated;
-  List<Feed> feedList;
+  List<Feed> feedList = new ArrayList<Feed>();
   public Entries(Node root) {
      int len = root.getChildNodes().getLength();
      for(int i=0;i<len;i++){
        Node node = root.getChildNodes().item(i);
        if(node.hasChildNodes()){
-         if(node.getNodeName().equals("title")){
+         String nodeName = node.getNodeName();
+         if(nodeName.equals("title")){
            title = node.getFirstChild().getNodeValue();
          }
-         if(node.getNodeName().equals("updated")){
+         if(nodeName.equals("updated")){
            updated = node.getFirstChild().getNodeValue();
+         }
+         if(nodeName.equals("entry")){
+           Feed feed = new Feed(node);
+           feedList.add(feed);
          }
        }
      }
