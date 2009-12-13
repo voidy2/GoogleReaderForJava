@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -130,9 +131,20 @@ public class GoogleReaderAPI {
       Element root = doc.getDocumentElement();
       dispDom(root, 0);
       Entries entries = new Entries(root);
-      
-      //System.out.println(root.getFirstChild().getAttributes().item(0));
-      //System.out.println(root.getElementsByTagName("list").item(0).getNodeName());
+      System.out.println(entries.getTitle());
+      System.out.println(entries.getUpdated());
+      System.out.println(entries.getFeedList().get(0).getSourceTitle());
+      System.out.println(entries.getFeedList().get(0).getSourceLink());
+      System.out.println(entries.getFeedList().get(0).getTitle());
+      System.out.println(entries.getFeedList().get(0).getUpdated());
+      System.out.println(entries.getFeedList().get(0).getAuthor());
+      System.out.println(entries.getFeedList().get(0).getLink());
+      List<String> tags = entries.getFeedList().get(0).getTags();
+      for ( String tag : tags ) {
+        System.out.println("tag : " + tag);
+      }
+      System.out.println(entries.getFeedList().get(0).getSummary());
+
     } catch ( ParserConfigurationException ex ) {
       System.out.println("不正なストリーム\n" + ex);
     } catch ( SAXException ex ) {

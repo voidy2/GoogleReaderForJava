@@ -32,18 +32,17 @@ public class Entries {
         }
       }
     }
-    System.out.println(title);
-    System.out.println(updated);
-    System.out.println(feedList.get(0).getSourceTitle());
-    System.out.println(feedList.get(0).getSourceLink());
-    System.out.println(feedList.get(0).getTitle());
-    System.out.println(feedList.get(0).getUpdated());
-    System.out.println(feedList.get(0).getAuthor());
-    System.out.println(feedList.get(0).getLink());
-    List<String> tags = feedList.get(0).getTags();
-    for ( String tag : tags ) {
-      System.out.println("tag : " + tag);
-    }
-    System.out.println(feedList.get(0).getSummary());
+  }
+
+  public List<Feed> getFeedList() {
+    return feedList;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getUpdated() {
+    return updated;
   }
 }
