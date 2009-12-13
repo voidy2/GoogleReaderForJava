@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +43,7 @@ public class GoogleReaderAPI {
     System.out.println(sid);
     System.out.println(t_token);
     System.out.println(this.getUnreadCount());
+    this.getLabelFeed("情報");
     //this.getUnreadFeed();
   }
 
@@ -117,7 +120,6 @@ public class GoogleReaderAPI {
   public int getUnreadCount() {
     String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
     Element root = callApi(url);
-    dispDom(root, 0);
     fsList = new FeedSourceList(root);
     return fsList.getUnreadCount();
   }
@@ -126,6 +128,17 @@ public class GoogleReaderAPI {
       String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
       Element root = callApi(url);
       dispDom(root, 0);
+  }
+
+  public void getLabelFeed(String tag) {
+    try {
+      String url = URI_PREFIXE_ATOM + ATOM_PREFIXE_LABEL + URLEncoder.encode(tag, "UTF-8");
+      Element root = callApi(url);
+      dispDom(root, 0);
+    } catch ( UnsupportedEncodingException ex ) {
+      Logger.getLogger(GoogleReaderAPI.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
   }
 
   public void dispDom(Node n, int c) {
