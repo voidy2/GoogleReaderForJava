@@ -131,19 +131,7 @@ public class GoogleReaderAPI {
       Element root = doc.getDocumentElement();
       dispDom(root, 0);
       Entries entries = new Entries(root);
-      System.out.println(entries.getTitle());
-      System.out.println(entries.getUpdated());
-      System.out.println(entries.getFeedList().get(0).getSourceTitle());
-      System.out.println(entries.getFeedList().get(0).getSourceLink());
-      System.out.println(entries.getFeedList().get(0).getTitle());
-      System.out.println(entries.getFeedList().get(0).getUpdated());
-      System.out.println(entries.getFeedList().get(0).getAuthor());
-      System.out.println(entries.getFeedList().get(0).getLink());
-      List<String> tags = entries.getFeedList().get(0).getTags();
-      for ( String tag : tags ) {
-        System.out.println("tag : " + tag);
-      }
-      System.out.println(entries.getFeedList().get(0).getSummary());
+      dispEntries(entries);
 
     } catch ( ParserConfigurationException ex ) {
       System.out.println("不正なストリーム\n" + ex);
@@ -182,6 +170,26 @@ public class GoogleReaderAPI {
         }
         dispDom(node, c);
       }
+    }
+  }
+
+  public void dispEntries(Entries entries) {
+    System.out.println(entries.getTitle());
+    System.out.println(entries.getUpdated());
+    List<Feed> feedList = entries.getFeedList();
+    for(Feed f : feedList){
+      System.out.println("--------------------------------------------");
+      System.out.println(f.getSourceTitle());
+      System.out.println(f.getSourceLink());
+      System.out.println(f.getTitle());
+      System.out.println(f.getUpdated());
+      System.out.println(f.getAuthor());
+      System.out.println(f.getLink());
+      List<String> tags = f.getTags();
+      for ( String tag : tags ) {
+        System.out.println("\ttag : " + tag);
+      }
+      System.out.println(f.getSummary());
     }
   }
 }
