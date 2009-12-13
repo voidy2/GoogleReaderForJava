@@ -27,6 +27,7 @@ public class GoogleReaderAPI {
   private String password;
   private String sid;
   private String t_token;
+  private FeedSourceList fsList;
 
   /**
    *
@@ -94,23 +95,15 @@ public class GoogleReaderAPI {
     return System.currentTimeMillis();
   }
 
-  public int getUnreadCount() {
-    int unreadCount = 0;
+  public Element callApi(String url) {
     try {
-      String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
-      NetworkAccess na =
-                    new NetworkAccess(url, "GET", null,
+      NetworkAccess na = new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
       DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = dbfactory.newDocumentBuilder();
       Document doc = builder.parse(na.access());
       Element root = doc.getDocumentElement();
-      dispDom(root, 0);
-      FeedSourceList fsList = new FeedSourceList(root);
-      unreadCount = fsList.getUnreadCount();
-
-      //System.out.println(root.getFirstChild().getAttributes().item(0));
-      //System.out.println(root.getElementsByTagName("list").item(0).getNodeName());
+      return root;
     } catch ( ParserConfigurationException ex ) {
       System.out.println("不正なストリーム\n" + ex);
     } catch ( SAXException ex ) {
@@ -118,30 +111,21 @@ public class GoogleReaderAPI {
     } catch ( IOException ex ) {
       System.out.println("不正なストリーム\n" + ex);
     }
-    return unreadCount;
+    return null;
+  }
+
+  public int getUnreadCount() {
+    String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
+    Element root = callApi(url);
+    dispDom(root, 0);
+    fsList = new FeedSourceList(root);
+    return fsList.getUnreadCount();
   }
 
   public void getUnreadFeed() {
-    try {
       String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
-      NetworkAccess na =
-                    new NetworkAccess(url, "GET", null,
-              "Cookie", "SID=" + sid + ";T=" + t_token);
-      DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = dbfactory.newDocumentBuilder();
-      Document doc = builder.parse(na.access());
-      Element root = doc.getDocumentElement();
+      Element root = callApi(url);
       dispDom(root, 0);
-      Entries entries = new Entries(root);
-      dispEntries(entries);
-
-    } catch ( ParserConfigurationException ex ) {
-      System.out.println("不正なストリーム\n" + ex);
-    } catch ( SAXException ex ) {
-      System.out.println("パースエラー\n" + ex);
-    } catch ( IOException ex ) {
-      System.out.println("不正なストリーム\n" + ex);
-    }
   }
 
   public void dispDom(Node n, int c) {
