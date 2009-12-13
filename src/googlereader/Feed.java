@@ -11,15 +11,14 @@ import org.w3c.dom.NodeList;
  */
 public class Feed {
 
-  String title;
-  String sourceTitle;
-  String author;
-  List<String> tags = new ArrayList<String>();
-  String published;
-  String updated;
-  String link;
-  String sourceLink;
-  String summary;
+  private String title;
+  private String author;
+  private List<Tag> tags = new ArrayList<Tag>();
+  private String published;
+  private String updated;
+  private String link;
+  private String summary;
+  private FeedSource feedSource;
 
   Feed(Node xmlFeed) {
     if ( xmlFeed.hasChildNodes() ) {
@@ -43,13 +42,15 @@ public class Feed {
       author = n.getFirstChild().getFirstChild().getNodeValue();
     } else if ( nodeName.equals("category") ) {
       String category = n.getAttributes().item(0).getNodeValue();
-      tags.add(category);
+      tags.add(new Tag(category));
     } else if ( nodeName.equals("link") ) {
       link = n.getAttributes().item(0).getNodeValue();
     } else if ( nodeName.endsWith("summary") || nodeName.equals("content") ) {
       summary = n.getFirstChild().getNodeValue();
     } else if ( nodeName.equals("source") ) {
       NodeList sourceList = n.getChildNodes();
+      String sourceTitle = "";
+      String sourceLink = "";
       for ( int j = 0; j < sourceList.getLength(); j++ ) {
         Node sn = sourceList.item(j);
         String nsName = sn.getNodeName();
@@ -59,6 +60,7 @@ public class Feed {
           sourceLink = sn.getAttributes().item(0).getNodeValue();
         }
       }
+      feedSource = new FeedSource(sourceTitle, sourceLink);
     }
   }
 
@@ -75,14 +77,14 @@ public class Feed {
   }
 
   public String getSourceLink() {
-    return sourceLink;
+    return feedSource.getLink();
   }
 
   public String getSummary() {
     return summary;
   }
 
-  public List<String> getTags() {
+  public List<Tag> getTags() {
     return tags;
   }
 
@@ -91,7 +93,7 @@ public class Feed {
   }
 
   public String getSourceTitle() {
-    return sourceTitle;
+    return feedSource.getTitle();
   }
 
   public String getUpdated() {

@@ -39,8 +39,8 @@ public class GoogleReaderAPI {
     this.loginAuth();
     System.out.println(sid);
     System.out.println(t_token);
-    //System.out.println(this.getUnreadCount());
-    this.getUnreadFeed();
+    System.out.println(this.getUnreadCount());
+    //this.getUnreadFeed();
   }
 
   private void loginAuth() {
@@ -106,6 +106,9 @@ public class GoogleReaderAPI {
       Document doc = builder.parse(na.access());
       Element root = doc.getDocumentElement();
       dispDom(root, 0);
+      FeedSourceList fsList = new FeedSourceList(root);
+      unreadCount = fsList.getUnreadCount();
+
       //System.out.println(root.getFirstChild().getAttributes().item(0));
       //System.out.println(root.getElementsByTagName("list").item(0).getNodeName());
     } catch ( ParserConfigurationException ex ) {
@@ -119,7 +122,6 @@ public class GoogleReaderAPI {
   }
 
   public void getUnreadFeed() {
-    int unreadCount = 0;
     try {
       String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
       NetworkAccess na =
@@ -177,7 +179,7 @@ public class GoogleReaderAPI {
     System.out.println(entries.getTitle());
     System.out.println(entries.getUpdated());
     List<Feed> feedList = entries.getFeedList();
-    for(Feed f : feedList){
+    for ( Feed f : feedList ) {
       System.out.println("--------------------------------------------");
       System.out.println(f.getSourceTitle());
       System.out.println(f.getSourceLink());
@@ -185,9 +187,9 @@ public class GoogleReaderAPI {
       System.out.println(f.getUpdated());
       System.out.println(f.getAuthor());
       System.out.println(f.getLink());
-      List<String> tags = f.getTags();
-      for ( String tag : tags ) {
-        System.out.println("\ttag : " + tag);
+      List<Tag> tags = f.getTags();
+      for ( Tag tag : tags ) {
+        System.out.println("\ttag : " + tag.getName());
       }
       System.out.println(f.getSummary());
     }
