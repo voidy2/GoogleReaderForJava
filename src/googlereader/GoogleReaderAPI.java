@@ -131,15 +131,15 @@ public class GoogleReaderAPI {
   }
 
   public void getUnreadFeed() {
-      String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
-      Element root = callApi(url);
-      dispDom(root, 0);
+    String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
+    Element root = callApi(url);
+    dispDom(root, 0);
   }
 
-   public void getStarreadFeed(String prams) {
-      String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + prams;
-      Element root = callApi(url);
-      dispDom(root, 0);
+  public void getStarreadFeed(String prams) {
+    String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + prams;
+    Element root = callApi(url);
+    dispDom(root, 0);
   }
 
   public void getLabelFeed(String tag) {
