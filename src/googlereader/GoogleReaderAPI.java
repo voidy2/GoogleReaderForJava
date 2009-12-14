@@ -43,8 +43,14 @@ public class GoogleReaderAPI {
     System.out.println(sid);
     System.out.println(t_token);
     System.out.println(this.getUnreadCount());
-    this.getLabelFeed("情報");
+    //this.getLabelFeed("情報");
     //this.getUnreadFeed();
+    AtomPrameters ap = new AtomPrameters();
+    ap.setCount(10);
+    ap.setOrder("o");
+    String params = ap.getParameters();
+    System.out.println(params);
+    this.getStarreadFeed(params);
   }
 
   private void loginAuth() {
@@ -126,6 +132,12 @@ public class GoogleReaderAPI {
 
   public void getUnreadFeed() {
       String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
+      Element root = callApi(url);
+      dispDom(root, 0);
+  }
+
+   public void getStarreadFeed(String prams) {
+      String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + prams;
       Element root = callApi(url);
       dispDom(root, 0);
   }
