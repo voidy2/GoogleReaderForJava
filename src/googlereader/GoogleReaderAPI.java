@@ -46,11 +46,15 @@ public class GoogleReaderAPI {
     //this.getLabelFeed("情報");
     //this.getUnreadFeed();
     AtomPrameters ap = new AtomPrameters();
-    ap.setCount(10);
-    ap.setOrder("o");
+    ap.setCount(20);
+
+    ap.setExclude_target(new Tag("user/-/state/com.google/read"));
+    //ap.setExclude_target(new Tag("user/-/state/com.google/starred"));
+    //ap.setOrder("o");
+    //ap.setStart_time(this.getTimestamp()-100000000L);
     String params = ap.getParameters();
     System.out.println(params);
-    this.getStarreadFeed(params);
+    this.getLabelFeed("情報", params);
   }
 
   private void loginAuth() {
@@ -101,7 +105,7 @@ public class GoogleReaderAPI {
   }
 
   public long getTimestamp() {
-    return System.currentTimeMillis();
+    return System.currentTimeMillis() / 1000L;
   }
 
   public Element callApi(String url) {
@@ -130,21 +134,21 @@ public class GoogleReaderAPI {
     return fsList.getUnreadCount();
   }
 
-  public void getUnreadFeed() {
-    String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST;
+  public void getUnreadFeed(String params) {
+    String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST + params;
     Element root = callApi(url);
     dispDom(root, 0);
   }
 
-  public void getStarreadFeed(String prams) {
-    String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + prams;
+  public void getStarredFeed(String params) {
+    String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + params;
     Element root = callApi(url);
     dispDom(root, 0);
   }
 
-  public void getLabelFeed(String tag) {
+  public void getLabelFeed(String tag, String params) {
     try {
-      String url = URI_PREFIXE_ATOM + ATOM_PREFIXE_LABEL + URLEncoder.encode(tag, "UTF-8");
+      String url = URI_PREFIXE_ATOM + ATOM_PREFIXE_LABEL + URLEncoder.encode(tag, "UTF-8") + params;
       Element root = callApi(url);
       dispDom(root, 0);
     } catch ( UnsupportedEncodingException ex ) {

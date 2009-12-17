@@ -1,5 +1,7 @@
 package googlereader;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import stringutils.StringUtils;
 
 /**
@@ -44,7 +46,12 @@ public class AtomPrameters {
       prams[4] = (TIMESTAMP + "=" + timestamp);
     }
     if ( exclude_target != null ) {
-      prams[5] = (EXCLUDE_TARGET + "=" + exclude_target.getName());
+      try {
+        prams[5] = (EXCLUDE_TARGET + "=" +
+                URLEncoder.encode(exclude_target.getName(), "UTF-8"));
+      } catch ( UnsupportedEncodingException ex ) {
+        System.out.println(ex);
+      }
     }
     if ( continuation != null ) {
       prams[6] = (CONTINUATION + "=" + continuation);
