@@ -12,6 +12,7 @@ import org.w3c.dom.NodeList;
 public class Feed {
 
   private String title;
+  private String id;
   private String author;
   private List<Tag> tags = new ArrayList<Tag>();
   private String published;
@@ -34,6 +35,8 @@ public class Feed {
   private void setItem(Node n, String nodeName) {
     if ( nodeName.equals("title") ) {
       title = n.getFirstChild().getNodeValue();
+    } else if ( nodeName.equals("id") ) {
+      id = n.getFirstChild().getNodeValue();
     } else if ( nodeName.equals("updated") ) {
       updated = n.getFirstChild().getNodeValue();
     } else if ( nodeName.equals("published") ) {
@@ -66,6 +69,10 @@ public class Feed {
 
   public String getAuthor() {
     return author;
+  }
+
+  public String getId() {
+    return id;
   }
 
   public String getLink() {

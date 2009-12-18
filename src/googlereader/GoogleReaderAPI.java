@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,7 +52,8 @@ public class GoogleReaderAPI {
     //ap.setStart_time(this.getTimestamp()-100000000L);
     String params = ap.getParameters();
     System.out.println(params);
-    this.getLabelFeed("情報", params);
+    //this.getLabelFeed("情報", params);
+    this.getUnreadFeed(params);
   }
 
   private void loginAuth() {
@@ -137,24 +136,26 @@ public class GoogleReaderAPI {
   public void getUnreadFeed(String params) {
     String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST + params;
     Element root = callApi(url);
-    dispDom(root, 0);
+    //dispDom(root, 0);
+    dispEntries(new Entries(root));
   }
 
   public void getStarredFeed(String params) {
     String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + params;
     Element root = callApi(url);
-    dispDom(root, 0);
+    //dispDom(root, 0);
+    dispEntries(new Entries(root));
   }
 
   public void getLabelFeed(String tag, String params) {
     try {
       String url = URI_PREFIXE_ATOM + ATOM_PREFIXE_LABEL + URLEncoder.encode(tag, "UTF-8") + params;
       Element root = callApi(url);
-      dispDom(root, 0);
+      //dispDom(root, 0);
+      dispEntries(new Entries(root));
     } catch ( UnsupportedEncodingException ex ) {
-      Logger.getLogger(GoogleReaderAPI.class.getName()).log(Level.SEVERE, null, ex);
+      System.out.println(ex);
     }
-
   }
 
   public void dispDom(Node n, int c) {
@@ -197,6 +198,7 @@ public class GoogleReaderAPI {
       System.out.println(f.getSourceTitle());
       System.out.println(f.getSourceLink());
       System.out.println(f.getTitle());
+      System.out.println(f.getId());
       System.out.println(f.getUpdated());
       System.out.println(f.getAuthor());
       System.out.println(f.getLink());
