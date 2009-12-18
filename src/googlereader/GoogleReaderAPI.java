@@ -3,6 +3,7 @@ package googlereader;
 import static googlereader.Const.*;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -53,7 +54,8 @@ public class GoogleReaderAPI {
     String params = ap.getParameters();
     System.out.println(params);
     //this.getLabelFeed("情報", params);
-    this.getUnreadFeed(params);
+    //this.getUnreadFeed(params);
+    this.addStar("tag:google.com,2005:reader/item/7af6fe4290be09b3");
   }
 
   private void loginAuth() {
@@ -107,7 +109,7 @@ public class GoogleReaderAPI {
     return System.currentTimeMillis() / 1000L;
   }
 
-  public Element callApi(String url) {
+  public Element getFeed(String url) {
     try {
       NetworkAccess na = new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
@@ -128,21 +130,21 @@ public class GoogleReaderAPI {
 
   public int getUnreadCount() {
     String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
-    Element root = callApi(url);
+    Element root = getFeed(url);
     fsList = new FeedSourceList(root);
     return fsList.getUnreadCount();
   }
 
   public void getUnreadFeed(String params) {
     String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST + params;
-    Element root = callApi(url);
+    Element root = getFeed(url);
     //dispDom(root, 0);
     dispEntries(new Entries(root));
   }
 
   public void getStarredFeed(String params) {
     String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + params;
-    Element root = callApi(url);
+    Element root = getFeed(url);
     //dispDom(root, 0);
     dispEntries(new Entries(root));
   }
@@ -150,12 +152,50 @@ public class GoogleReaderAPI {
   public void getLabelFeed(String tag, String params) {
     try {
       String url = URI_PREFIXE_ATOM + ATOM_PREFIXE_LABEL + URLEncoder.encode(tag, "UTF-8") + params;
-      Element root = callApi(url);
+      Element root = getFeed(url);
       //dispDom(root, 0);
       dispEntries(new Entries(root));
     } catch ( UnsupportedEncodingException ex ) {
       System.out.println(ex);
     }
+  }
+
+  private boolean editApi(String target, String[] postArgs) {
+    try {
+      String params = StringUtils.join(postArgs, "&");
+      String url = URI_PREFIXE_API + target;
+      NetworkAccess na = new NetworkAccess(url, "POST",
+              params, "Cookie", "SID=" + sid + ";T=" + t_token);
+      BufferedReader br = new BufferedReader(
+              new InputStreamReader(na.access()));
+      String returnStr = br.readLine();
+      if ( returnStr.equals("OK") ) {
+        return true;
+      }
+    } catch ( IOException ex ) {
+      System.out.println(ex);
+    } catch ( NullPointerException ex ) {
+      System.out.println(ex);
+    }
+    return false;
+  }
+
+  public void addStar(String id) {
+    String[] postArgs = {
+      "i=" + id,
+      "a=" + ATOM_STATE_STARRED,
+      "T=" + this.t_token
+    };
+    this.editApi(API_EDIT_TAG, postArgs);
+  }
+
+  public void removeStar(String id) {
+    String[] postArgs = {
+      "i=" + id,
+      "r=" + ATOM_STATE_STARRED,
+      "T=" + this.t_token
+    };
+    this.editApi(API_EDIT_TAG, postArgs);
   }
 
   public void dispDom(Node n, int c) {
