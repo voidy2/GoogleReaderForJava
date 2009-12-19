@@ -50,7 +50,7 @@ public class GoogleReaderAPI {
     //ap.setExclude_target(new Tag("user/-/state/com.google/starred"));
     //ap.setOrder("o")
     //ap.setStart_time(this.getTimestamp()-100000000L);
-    this.getLabelFeed(new Tag(ATOM_PREFIXE_LABEL + "情報"), ap);
+    this.doGetLabelFeed(new Tag(ATOM_PREFIXE_LABEL + "情報"), ap);
     //this.getUnreadFeed(ap);
     //this.addStar("tag:google.com,2005:reader/item/7af6fe4290be09b3");
   }
@@ -171,7 +171,7 @@ public class GoogleReaderAPI {
    * 未読アイテムを返す
    * @param ap 付加指定するパラメータ
    */
-  public void getUnreadFeed(AtomPrameters ap) {
+  public void doGetUnreadFeed(AtomPrameters ap) {
     ap.setExclude_target(new Tag(ATOM_STATE_READ));
     Element root = getAtomFeed(ATOM_STATE_READING_LIST, ap);
     //dispDom(root, 0);
@@ -182,7 +182,7 @@ public class GoogleReaderAPI {
    * スター付きアイテムを返す
    * @param ap 付加指定するパラメータ
    */
-  public void getStarredFeed(AtomPrameters ap) {
+  public void doGetStarredFeed(AtomPrameters ap) {
     Element root = getAtomFeed(ATOM_STATE_STARRED, ap);
     //dispDom(root, 0);
     dispEntries(new Entries(root));
@@ -193,7 +193,7 @@ public class GoogleReaderAPI {
    * @param tag 指定するラベル
    * @param ap 付加指定するパラメータ
    */
-  public void getLabelFeed(Tag tag, AtomPrameters ap) {
+  public void doGetLabelFeed(Tag tag, AtomPrameters ap) {
     try {
       String tagName = URLEncoder.encode(tag.getName(), "UTF-8");
       Element root = getAtomFeed(tagName, ap);
