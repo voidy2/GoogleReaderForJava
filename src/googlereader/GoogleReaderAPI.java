@@ -31,9 +31,9 @@ public class GoogleReaderAPI {
   private FeedSourceList fsList;
 
   /**
-   *
-   * @param userId
-   * @param password
+   * コンストラクタ
+   * @param userId Googleアカウントのユーザ名
+   * @param password Googleアカウントのパスワード
    */
   public GoogleReaderAPI(String userId, String password) {
     this.userId = userId;
@@ -46,23 +46,26 @@ public class GoogleReaderAPI {
     //this.getUnreadFeed();
     AtomPrameters ap = new AtomPrameters();
     ap.setCount(20);
-
     ap.setExclude_target(new Tag("user/-/state/com.google/read"));
     //ap.setExclude_target(new Tag("user/-/state/com.google/starred"));
-    //ap.setOrder("o");
+    //ap.setOrder("o")
     //ap.setStart_time(this.getTimestamp()-100000000L);
-    String params = ap.getParameters();
-    System.out.println(params);
-    //this.getLabelFeed("情報", params);
-    //this.getUnreadFeed(params);
-    this.addStar("tag:google.com,2005:reader/item/7af6fe4290be09b3");
+    this.getLabelFeed(new Tag(ATOM_PREFIXE_LABEL + "情報"), ap);
+    //this.getUnreadFeed(ap);
+    //this.addStar("tag:google.com,2005:reader/item/7af6fe4290be09b3");
   }
 
+  /**
+   * コンストラクタから呼ばれるログイン処理(SIDとTトークンの設定)
+   */
   private void loginAuth() {
     this.setSid();
     this.setT_Token();
   }
 
+  /**
+   * SIDを取得して設定する
+   */
   private void setSid() {
     try {
       String[] params = { "Email=" + URLEncoder.encode(userId, "UTF-8"),
@@ -88,6 +91,9 @@ public class GoogleReaderAPI {
     }
   }
 
+  /**
+   * Tトークンを取得して設定する
+   */
   private void setT_Token() {
     try {
       String url = URI_PREFIXE_API + API_TOKEN;
@@ -105,11 +111,20 @@ public class GoogleReaderAPI {
     }
   }
 
+  /**
+   * Unix時間(秒)を返す
+   * @return 1970年1月1日0時0分0秒からの現在までの経過時間(秒)
+   */
   public long getTimestamp() {
     return System.currentTimeMillis() / 1000L;
   }
 
-  public Element getFeed(String url) {
+  /**
+   * 指定したURLからXMLFeedを取得する
+   * @param url 指定するURL
+   * @return 取得したxml
+   */
+  private Element getFeed(String url) {
     try {
       NetworkAccess na = new NetworkAccess(url, "GET", null,
               "Cookie", "SID=" + sid + ";T=" + t_token);
@@ -128,31 +143,60 @@ public class GoogleReaderAPI {
     return null;
   }
 
+  /**
+   * 指定したATOMFeedを取得する
+   * @param atomState 取得したいFeedアイテムの状態
+   * 　(例: スターの付いたアイテムを開きたい場合 : /user/-/state/com.google/starred)
+   * @param ap 指定する付加パラメータ
+   * @return 取得したXMLフィード
+   */
+  public Element getAtomFeed(String atomState, AtomPrameters ap) {
+    String url = URI_PREFIXE_ATOM + atomState + ap.getParameters();
+    return getFeed(url);
+  }
+
+  /**
+   * だいたいの未読記事数を返す
+   * @return 未読記事数
+   */
   public int getUnreadCount() {
+    //だいたいなのは1000件以上未読がある場合はきちんとした数字をAPIが返してくれないため
     String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
     Element root = getFeed(url);
     fsList = new FeedSourceList(root);
     return fsList.getUnreadCount();
   }
 
-  public void getUnreadFeed(String params) {
-    String url = URI_PREFIXE_ATOM + ATOM_STATE_READING_LIST + params;
-    Element root = getFeed(url);
+  /**
+   * 未読アイテムを返す
+   * @param ap 付加指定するパラメータ
+   */
+  public void getUnreadFeed(AtomPrameters ap) {
+    ap.setExclude_target(new Tag(ATOM_STATE_READ));
+    Element root = getAtomFeed(ATOM_STATE_READING_LIST, ap);
     //dispDom(root, 0);
     dispEntries(new Entries(root));
   }
 
-  public void getStarredFeed(String params) {
-    String url = URI_PREFIXE_ATOM + ATOM_STATE_STARRED + params;
-    Element root = getFeed(url);
+  /**
+   * スター付きアイテムを返す
+   * @param ap 付加指定するパラメータ
+   */
+  public void getStarredFeed(AtomPrameters ap) {
+    Element root = getAtomFeed(ATOM_STATE_STARRED, ap);
     //dispDom(root, 0);
     dispEntries(new Entries(root));
   }
 
-  public void getLabelFeed(String tag, String params) {
+  /**
+   * 指定したラベルのアイテムを返す
+   * @param tag 指定するラベル
+   * @param ap 付加指定するパラメータ
+   */
+  public void getLabelFeed(Tag tag, AtomPrameters ap) {
     try {
-      String url = URI_PREFIXE_ATOM + ATOM_PREFIXE_LABEL + URLEncoder.encode(tag, "UTF-8") + params;
-      Element root = getFeed(url);
+      String tagName = URLEncoder.encode(tag.getName(), "UTF-8");
+      Element root = getAtomFeed(tagName, ap);
       //dispDom(root, 0);
       dispEntries(new Entries(root));
     } catch ( UnsupportedEncodingException ex ) {
@@ -180,6 +224,10 @@ public class GoogleReaderAPI {
     return false;
   }
 
+  /**
+   * 指定した記事idのスターを付ける
+   * @param id 指定する記事id
+   */
   public void addStar(String id) {
     String[] postArgs = {
       "i=" + id,
@@ -189,6 +237,10 @@ public class GoogleReaderAPI {
     this.editApi(API_EDIT_TAG, postArgs);
   }
 
+  /**
+   * 指定した記事idのスターを外す
+   * @param id 指定する記事id
+   */
   public void removeStar(String id) {
     String[] postArgs = {
       "i=" + id,
@@ -198,6 +250,12 @@ public class GoogleReaderAPI {
     this.editApi(API_EDIT_TAG, postArgs);
   }
 
+  /**
+   * デバッグ用のDOM表示メソッド
+   * 指定したNodeから再帰的に下層を表示していく
+   * @param n ノード(rootを指定すると良い)
+   * @param c インデント数(最初は0を指定すると良い)
+   */
   public void dispDom(Node n, int c) {
     c++;
     int len = n.getChildNodes().getLength();
@@ -229,6 +287,11 @@ public class GoogleReaderAPI {
     }
   }
 
+  /**
+   * デバッグ用のエントリー表示メソッド
+   * フィード情報を表示していく
+   * @param entries 指定するエントリー
+   */
   public void dispEntries(Entries entries) {
     System.out.println(entries.getTitle());
     System.out.println(entries.getUpdated());
