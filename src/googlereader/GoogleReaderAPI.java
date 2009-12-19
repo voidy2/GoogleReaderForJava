@@ -51,7 +51,7 @@ public class GoogleReaderAPI {
     //ap.setStart_time(this.getTimestamp()-100000000L);
     this.doGetLabelFeed(new Tag(ATOM_PREFIXE_LABEL + "情報"), ap);
     //this.getUnreadFeed(ap);
-    //this.addStar("tag:google.com,2005:reader/item/7af6fe4290be09b3");
+    //this.delLabel("tag:google.com,2005:reader/item/7af6fe4290be09b3",new Tag(ATOM_PREFIXE_LABEL + "2ch"));
   }
 
   /**
@@ -270,6 +270,34 @@ public class GoogleReaderAPI {
     String[] postArgs = {
       "i=" + id,
       "a=" + ATOM_STATE_UNREAD,
+      "T=" + this.t_token
+    };
+    this.editApi(API_EDIT_TAG, postArgs);
+  }
+
+  /**
+   * 指定した記事idにラベルを付加する
+   * @param id 指定する記事id
+   * @param label 追加するラベル
+   */
+  public void addLabel(String id, Tag label) {
+    String[] postArgs = {
+      "i=" + id,
+      "a=" + label.getName(),
+      "T=" + this.t_token
+    };
+    this.editApi(API_EDIT_TAG, postArgs);
+  }
+
+  /**
+   * 指定した記事idのラベルを外す
+   * @param id 指定する記事id
+   * @param label 削除するラベル
+   */
+  public void delLabel(String id, Tag label) {
+    String[] postArgs = {
+      "i=" + id,
+      "r=" + label.getName(),
       "T=" + this.t_token
     };
     this.editApi(API_EDIT_TAG, postArgs);
