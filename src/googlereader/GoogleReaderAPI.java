@@ -3,7 +3,6 @@ package googlereader;
 import static googlereader.Const.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -241,10 +240,36 @@ public class GoogleReaderAPI {
    * 指定した記事idのスターを外す
    * @param id 指定する記事id
    */
-  public void removeStar(String id) {
+  public void delStar(String id) {
     String[] postArgs = {
       "i=" + id,
       "r=" + ATOM_STATE_STARRED,
+      "T=" + this.t_token
+    };
+    this.editApi(API_EDIT_TAG, postArgs);
+  }
+
+  /**
+   * 指定した記事idを既読にする
+   * @param id 指定する記事id
+   */
+  public void doSetRead(String id) {
+    String[] postArgs = {
+      "i=" + id,
+      "a=" + ATOM_STATE_READ,
+      "T=" + this.t_token
+    };
+    this.editApi(API_EDIT_TAG, postArgs);
+  }
+
+  /**
+   * 指定した記事idを未読にする
+   * @param id 指定する記事id
+   */
+  public void doSetUnread(String id) {
+    String[] postArgs = {
+      "i=" + id,
+      "a=" + ATOM_STATE_UNREAD,
       "T=" + this.t_token
     };
     this.editApi(API_EDIT_TAG, postArgs);
