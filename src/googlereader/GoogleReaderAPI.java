@@ -38,20 +38,6 @@ public class GoogleReaderAPI {
     this.userId = userId;
     this.password = password;
     this.loginAuth();
-    System.out.println(sid);
-    System.out.println(t_token);
-    System.out.println(this.getUnreadCount());
-    //this.getLabelFeed("情報");
-    //this.getUnreadFeed();
-    AtomPrameters ap = new AtomPrameters();
-    ap.setCount(20);
-    ap.setExclude_target(new Tag("user/-/state/com.google/read"));
-    //ap.setExclude_target(new Tag("user/-/state/com.google/starred"));
-    //ap.setOrder("o")
-    //ap.setStart_time(this.getTimestamp()-100000000L);
-    this.doGetLabelFeed(new Tag(ATOM_PREFIXE_LABEL + "情報"), ap);
-    //this.getUnreadFeed(ap);
-    //this.delLabel("tag:google.com,2005:reader/item/7af6fe4290be09b3",new Tag(ATOM_PREFIXE_LABEL + "2ch"));
   }
 
   /**
