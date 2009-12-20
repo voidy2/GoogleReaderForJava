@@ -2,7 +2,14 @@ package framecontrol;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -12,13 +19,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 /**
  *
  * @author voidy21
  */
 public class MainFrame extends JFrame
-        implements KeyListener, ListSelectionListener {
+        implements KeyListener, ListSelectionListener, TreeSelectionListener {
 
   private static final long serialVersionUID = 1L;
   private static final String mac = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
@@ -35,45 +47,68 @@ public class MainFrame extends JFrame
   String[] text = { "ListA", "ListB", "テスト\nListC", "ListD", "ListE", "ListF", "ListG", "ListH" };
 
   public MainFrame() {
-    String currentLookAndFeel = gtk;
     try {
-      UIManager.setLookAndFeel(currentLookAndFeel);
-      SwingUtilities.updateComponentTreeUI(this);
-    } catch ( Exception ex ) {
-      ex.printStackTrace();
-      System.out.println("Failed loading L&F: " + currentLookAndFeel);
+      String currentLookAndFeel = gtk;
+      try {
+        UIManager.setLookAndFeel(currentLookAndFeel);
+        SwingUtilities.updateComponentTreeUI(this);
+      } catch ( Exception ex ) {
+        ex.printStackTrace();
+        System.out.println("Failed loading L&F: " + currentLookAndFeel);
+      }
+      setLayout(new FlowLayout());
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setTitle("KeyListenerTest");
+      JScrollPane sp = new JScrollPane();
+      lst = new JList(data);
+      sp.getViewport().setView(lst);
+      sp.setPreferredSize(new Dimension(300, 400));
+      this.addKeyListener(this);
+      lst.addListSelectionListener(this);
+      lst.addKeyListener(this);
+      ta = new JTextArea();
+      ta.addKeyListener(this);
+      JScrollPane sp2 = new JScrollPane();
+      sp2.getViewport().setView(ta);
+      sp2.setPreferredSize(new Dimension(400, 400));
+      ta.setColumns(40);
+      ta.setRows(20);
+      DefaultMutableTreeNode root = new DefaultMutableTreeNode("チンパンジー");
+      DefaultMutableTreeNode swing = new DefaultMutableTreeNode("あなたとは");
+      DefaultMutableTreeNode java2d = new DefaultMutableTreeNode("違うんです");
+      DefaultMutableTreeNode java3d = new DefaultMutableTreeNode("客観的な");
+      DefaultMutableTreeNode javamail = new DefaultMutableTreeNode("視点で");
+      DefaultMutableTreeNode swingSub1 = new DefaultMutableTreeNode("物事を");
+      DefaultMutableTreeNode swingSub2 = new DefaultMutableTreeNode("見ることが");
+      DefaultMutableTreeNode swingSub3 = new DefaultMutableTreeNode("できるんです");
+      swing.add(swingSub1);
+      swing.add(swingSub2);
+      swing.add(swingSub3);
+      root.add(swing);
+      root.add(java2d);
+      root.add(java3d);
+      root.add(javamail);
+      tree = new JTree(root);
+      tree.addTreeSelectionListener(this);
+      DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+      Image img = ImageIO.read(new File("./img/test.jpg"));
+      ImageIcon icon = new ImageIcon(img.getScaledInstance(12, 12, Image.SCALE_SMOOTH));
+      renderer.setLeafIcon(icon);
+      renderer.setClosedIcon(icon);
+      renderer.setOpenIcon(icon);
+
+      tree.setCellRenderer(renderer);
+      JScrollPane sp3 = new JScrollPane();
+      sp3.getViewport().setView(tree);
+      sp3.setPreferredSize(new Dimension(200, 400));
+      add(sp3);
+      add(sp);
+      add(sp2);
+      setSize(940, 440);
+      setVisible(true);
+    } catch ( IOException ex ) {
+      Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
     }
-
-    getContentPane().setLayout(new FlowLayout());
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setTitle("KeyListenerTest");
-    JScrollPane sp = new JScrollPane();
-
-    lst = new JList(data);
-    sp.getViewport().setView(lst);
-    sp.setPreferredSize(new Dimension(300, 400));
-    
-    this.addKeyListener(this);
-    lst.addListSelectionListener(this);
-    lst.addKeyListener(this);
-    ta = new JTextArea();
-    ta.addKeyListener(this);
-    JScrollPane sp2 = new JScrollPane();
-    sp2.getViewport().setView(ta);
-    sp2.setPreferredSize(new Dimension(400, 400));
-    ta.setColumns(40);
-    ta.setRows(20);
-    
-    JScrollPane sp3 = new JScrollPane();
-    tree = new JTree();
-    sp3.getViewport().setView(tree);
-    sp3.setPreferredSize(new Dimension(200,400));
-
-    add(sp3);   
-    add(sp);
-    add(sp2);
-    setSize(940, 440);
-    setVisible(true);
 
   }
 
@@ -110,6 +145,13 @@ public class MainFrame extends JFrame
     JList l = ( JList ) e.getSource();
     select = l.getSelectedIndex();
     ta.setText(text[select]);
+  }
+
+  public void valueChanged(TreeSelectionEvent e) {
+    TreePath[] paths = e.getPaths();
+    if ( e.isAddedPath() ) {
+      ta.setText(paths[0].toString());
+    }
   }
 }
 
