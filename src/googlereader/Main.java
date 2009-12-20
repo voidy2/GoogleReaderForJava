@@ -27,6 +27,7 @@ public class Main {
     BufferedReader br = new BufferedReader(fr);
     String username = br.readLine();
     String password = br.readLine();
-    new GoogleReaderAPI(username,password);
+    //new GoogleReaderAPI(username,password);
+    new framecontrol.MainFrame();
   }
 }
