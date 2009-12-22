@@ -64,7 +64,7 @@ public class MainFrame extends JFrame
       JScrollPane sp = new JScrollPane();
       lst = new JList(data);
       sp.getViewport().setView(lst);
-      //sp.setPreferredSize(new Dimension(900, 300));
+
       this.addKeyListener(this);
       lst.addListSelectionListener(this);
       lst.addKeyListener(this);
@@ -72,7 +72,7 @@ public class MainFrame extends JFrame
       ta.addKeyListener(this);
       JScrollPane sp2 = new JScrollPane();
       sp2.getViewport().setView(ta);
-      //sp2.setPreferredSize(new Dimension(900, 400));
+
       ta.setColumns(40);
       ta.setRows(20);
       DefaultMutableTreeNode root = new DefaultMutableTreeNode("チンパンジー");
@@ -106,7 +106,7 @@ public class MainFrame extends JFrame
       tree.setCellRenderer(renderer);
       JScrollPane sp3 = new JScrollPane();
       sp3.getViewport().setView(tree);
-      //sp3.setPreferredSize(new Dimension(300, 700));
+
       JSplitPane splitpaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,true);
       JSplitPane splitpaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true);
       splitpaneV.setTopComponent(sp);
