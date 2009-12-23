@@ -1,46 +1,70 @@
 package framecontrol;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 /**
  * faviconをそれぞれ保持しているTreeNode
  * @author voidy21
  */
-public class LabelTreeNode implements TreeNode {
+@SuppressWarnings( "serial" )
+public class LabelTreeNode extends DefaultMutableTreeNode {
 
-  @Override
-  public TreeNode getChildAt(int childIndex) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  private Icon LeafIcon;
+  private Icon OpenIcon;
+  private Icon ClosedIcon;
+  private int iconsize = 18;
+
+  public LabelTreeNode(Object obj) {
+    super(obj);
+    try {
+      Image rss = ImageIO.read(new File(LabelTree.RSS_ICON_FILE));
+      Image folder = ImageIO.read(new File(LabelTree.LABEL_CLOSE_ICON_FILE));
+      Image folderOpen = ImageIO.read(new File(LabelTree.LABEL_OPEN_ICON_FILE));
+      LeafIcon = new ImageIcon(rss.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
+      OpenIcon = new ImageIcon(folderOpen.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
+      ClosedIcon = new ImageIcon(folder.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
+    } catch ( IOException ex ) {
+      Logger.getLogger(LabelTreeNode.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 
-  @Override
-  public int getChildCount() {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public void setClosedIcon(Icon ClosedIcon) {
+    this.ClosedIcon = ClosedIcon;
   }
 
-  @Override
-  public TreeNode getParent() {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public void setLeafIcon(Icon LeafIcon) {
+    this.LeafIcon = LeafIcon;
   }
 
-  @Override
-  public int getIndex(TreeNode node) {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public void setOpenIcon(Icon OpenIcon) {
+    this.OpenIcon = OpenIcon;
   }
 
-  @Override
-  public boolean getAllowsChildren() {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public void setIconsize(int iconsize) {
+    this.iconsize = iconsize;
   }
 
-  @Override
-  public boolean isLeaf() {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Icon getLeafIcon() {
+    return LeafIcon;
   }
 
-  @Override
-  public Enumeration children() {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public Icon getOpenIcon() {
+    return OpenIcon;
+  }
+
+  public Icon getClosedIcon() {
+    return ClosedIcon;
   }
 }
