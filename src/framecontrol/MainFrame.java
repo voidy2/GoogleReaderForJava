@@ -84,10 +84,12 @@ public class MainFrame extends JFrame
     JSplitPane splitpaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
     splitpaneV.setTopComponent(sp);
     splitpaneV.setBottomComponent(sp2);
+    splitpaneV.setContinuousLayout(true);
     splitpaneH.setLeftComponent(sp3);
     splitpaneH.setRightComponent(splitpaneV);
+    splitpaneH.setContinuousLayout(true);
     add(splitpaneH);
-    setSize(1000, 700);
+    setBounds(100, 100, 1000,700);
     setVisible(true);
   }
 
