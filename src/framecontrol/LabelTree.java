@@ -1,12 +1,5 @@
 package framecontrol;
 
-import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -28,6 +21,7 @@ public class LabelTree extends JTree {
     LabelTreeNode swingSub2 = new LabelTreeNode("見ることが");
     LabelTreeNode swingSub3 = new LabelTreeNode("できるんです");
     javamail.setLeafIcon("./img/anpanman.jpg");
+    networkaccess.ImageGet.saveFavicon("http://blog.fkoji.com/2009/01262145.html");
     swing.add(swingSub1);
     swing.add(swingSub2);
     swing.add(swingSub3);
