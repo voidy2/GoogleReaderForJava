@@ -28,8 +28,10 @@ public class Main {
     String username = br.readLine();
     String password = br.readLine();
     GoogleReaderAPI gapi = new GoogleReaderAPI(username,password);
-    gapi.getUnreadCount();
-    gapi.getFsList().save("user/02449446468507871574/label/情報");
-    new framecontrol.MainFrame();
+    gapi.doGetLabelList();
+    gapi.doGetSubscriptionFeedList();
+    //gapi.getUnreadCount();
+    gapi.getFsList().saveAllLabel();
+    new framecontrol.MainFrame(gapi);
   }
 }

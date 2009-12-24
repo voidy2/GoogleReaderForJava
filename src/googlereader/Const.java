@@ -4,8 +4,6 @@
  */
 package googlereader;
 
-import java.util.HashMap;
-
 /**
  *
  * @author fcs04065

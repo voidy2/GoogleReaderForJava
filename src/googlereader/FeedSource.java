@@ -10,7 +10,10 @@ import java.util.List;
 public class FeedSource {
 
   private int unreadCount;
+  private String url;
   private String title;
+  private String htmlUrl;
+  private String sortId;
   private String link;
   private List<Tag> tags = new ArrayList<Tag>();
 
@@ -41,6 +44,31 @@ public class FeedSource {
   public int getUnreadCount() {
     return unreadCount;
   }
+
+  public String getHtmlUrl() {
+    return htmlUrl;
+  }
+
+  public void setHtmlUrl(String htmlUrl) {
+    this.htmlUrl = htmlUrl;
+  }
+
+  public String getSortId() {
+    return sortId;
+  }
+
+  public void setSortId(String sortId) {
+    this.sortId = sortId;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
+
 
   public void setUnreadCount(int unreadCount) {
     this.unreadCount = unreadCount;

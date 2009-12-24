@@ -37,6 +37,7 @@ public class GoogleReaderAPI {
   public GoogleReaderAPI(String userId, String password) {
     this.userId = userId;
     this.password = password;
+    this.fsList = new FeedSourceList();
     this.loginAuth();
   }
 
@@ -152,7 +153,7 @@ public class GoogleReaderAPI {
     //だいたいなのは1000件以上未読がある場合はきちんとした数字をAPIが返してくれないため
     String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
     Element root = getFeed(url);
-    fsList = new FeedSourceList(root);
+    //fsList = new FeedSourceList(root);
     return fsList.getUnreadCount();
   }
 
@@ -191,6 +192,24 @@ public class GoogleReaderAPI {
     } catch ( UnsupportedEncodingException ex ) {
       System.out.println(ex);
     }
+  }
+
+  /**
+   * ラベルを読み込む
+   */
+  public void doGetLabelList() {
+    String url = URI_PREFIXE_API + API_LIST_TAG;
+    Element root = getFeed(url);
+    fsList.setLabels(root);
+  }
+
+  /**
+   * 登録記事を読み込む
+   */
+  public void doGetSubscriptionFeedList() {
+    String url = URI_PREFIXE_API + API_LIST_SUBSCRIPTION;
+    Element root = getFeed(url);
+    fsList.setSubscription(root);
   }
 
   private boolean editApi(String target, String[] postArgs) {

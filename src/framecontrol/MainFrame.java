@@ -1,5 +1,6 @@
 package framecontrol;
 
+import googlereader.GoogleReaderAPI;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.JFrame;
@@ -32,11 +33,13 @@ public class MainFrame extends JFrame
   JList lst;
   JTextArea ta;
   LabelTree tree;
+  GoogleReaderAPI gapi;
   int select;
   String[] data = { "ListA", "ListB", "ListC", "ListD", "ListE", "ListF", "ListG", "ListH" };
   String[] text = { "ListA", "ListB", "テスト\nListC", "ListD", "ListE", "ListF", "ListG", "ListH" };
 
-  public MainFrame() {
+  public MainFrame(GoogleReaderAPI gapi) {
+    this.gapi = gapi;
     String currentLookAndFeel = gtk;
     try {
       UIManager.setLookAndFeel(currentLookAndFeel);
@@ -63,7 +66,7 @@ public class MainFrame extends JFrame
     ta.setColumns(40);
     ta.setRows(20);
 
-    tree = new LabelTree();
+    tree = new LabelTree(gapi);
     tree.addTreeSelectionListener(this);
     JScrollPane sp3 = new JScrollPane();
     sp3.getViewport().setView(tree);

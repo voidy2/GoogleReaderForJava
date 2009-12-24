@@ -24,4 +24,9 @@ public class Tag {
   public void setUnreadCount(int unreadCount) {
     this.unreadCount = unreadCount;
   }
+
+  public String getSmartName() {
+    String[] sp = name.split("/");
+    return sp[sp.length-1];
+  }
 }
