@@ -40,6 +40,10 @@ public class GoogleReaderAPI {
     this.loginAuth();
   }
 
+  public FeedSourceList getFsList() {
+    return fsList;
+  }
+  
   /**
    * コンストラクタから呼ばれるログイン処理(SIDとTトークンの設定)
    */

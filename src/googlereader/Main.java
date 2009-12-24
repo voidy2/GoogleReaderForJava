@@ -27,7 +27,9 @@ public class Main {
     BufferedReader br = new BufferedReader(fr);
     String username = br.readLine();
     String password = br.readLine();
-    //new GoogleReaderAPI(username,password);
+    GoogleReaderAPI gapi = new GoogleReaderAPI(username,password);
+    gapi.getUnreadCount();
+    gapi.getFsList().save("user/02449446468507871574/label/情報");
     new framecontrol.MainFrame();
   }
 }

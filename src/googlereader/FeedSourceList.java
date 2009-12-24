@@ -30,7 +30,7 @@ public class FeedSourceList {
           }
         }
       }
-      setUnreadCount();
+      doSetUnreadCount();
     }
   }
 
@@ -63,7 +63,7 @@ public class FeedSourceList {
     }
   }
 
-  private void setUnreadCount() {
+  private void doSetUnreadCount() {
     int allUnreadCount = 0;
     int size = fsList.size();
     for ( int i = 0; i < size; ++i ) {
@@ -72,7 +72,7 @@ public class FeedSourceList {
       if ( feedSource.getTags().get(0).getName() != null ) {
         Tag tag = tagMap.get(feedSource.getTags().get(0).getName());
         int tagUnreadCount = tag.getUnreadCount();
-        tag.setUnreadCount(tagUnreadCount+count);
+        tag.setUnreadCount(tagUnreadCount + count);
         //同じURLのフィードはカウントしないようにしたい
         //ここに処理を書く
         //HashMapを使うといいと思う
@@ -95,5 +95,25 @@ public class FeedSourceList {
 
   public int getUnreadCount() {
     return unreadCount;
+  }
+
+  public List<FeedSource> getFsList(Tag label) {
+    List<FeedSource> labelFsList = new ArrayList<FeedSource>();
+    for ( FeedSource feedSource : fsList ) {
+      if ( feedSource.getTitle() != null ) {
+        if ( feedSource.isExistTag(label) ) {
+          labelFsList.add(feedSource);
+        }
+      }
+    }
+    return labelFsList;
+  }
+
+  public void save(String label) {
+    Tag tag = new Tag(label);
+    //保存する処理をあとで書く！！！
+    for ( FeedSource feedSource : getFsList(tag) ) {
+      System.out.println(feedSource.getTitle());
+    }
   }
 }

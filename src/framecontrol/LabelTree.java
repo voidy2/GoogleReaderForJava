@@ -21,7 +21,6 @@ public class LabelTree extends JTree {
     LabelTreeNode swingSub2 = new LabelTreeNode("見ることが");
     LabelTreeNode swingSub3 = new LabelTreeNode("できるんです");
     javamail.setLeafIcon("./img/anpanman.jpg");
-    networkaccess.ImageGet.saveFavicon("http://blog.fkoji.com/2009/01262145.html");
     swing.add(swingSub1);
     swing.add(swingSub2);
     swing.add(swingSub3);
