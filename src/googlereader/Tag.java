@@ -27,6 +27,14 @@ public class Tag {
 
   public String getSmartName() {
     String[] sp = name.split("/");
-    return sp[sp.length-1];
+    return sp[sp.length - 1];
+  }
+
+  public boolean isState() {
+    String[] sp = name.split("/");
+    if ( sp[2].equals("state") ) {
+      return true;
+    }
+    return false;
   }
 }

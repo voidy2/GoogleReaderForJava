@@ -15,9 +15,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 @SuppressWarnings( "serial" )
 public class LabelTreeNode extends DefaultMutableTreeNode {
 
-  public final static String RSS_ICON_FILE = "./img/rss.png";
-  public final static String LABEL_CLOSE_ICON_FILE = "./img/Folder.png";
-  public final static String LABEL_OPEN_ICON_FILE = "./img/Folder_Open.png";
   private Icon LeafIcon;
   private Icon OpenIcon;
   private Icon ClosedIcon;
@@ -25,20 +22,6 @@ public class LabelTreeNode extends DefaultMutableTreeNode {
 
   public LabelTreeNode(Object obj) {
     super(obj);
-    doSetDefaultIcons();
-  }
-
-  private void doSetDefaultIcons() {
-    try {
-      Image rss = ImageIO.read(new File(RSS_ICON_FILE));
-      Image folder = ImageIO.read(new File(LABEL_CLOSE_ICON_FILE));
-      Image folderOpen = ImageIO.read(new File(LABEL_OPEN_ICON_FILE));
-      LeafIcon = new ImageIcon(rss.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
-      OpenIcon = new ImageIcon(folderOpen.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
-      ClosedIcon = new ImageIcon(folder.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
-    }
   }
 
   public void setClosedIcon(Icon ClosedIcon) {

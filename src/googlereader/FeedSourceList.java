@@ -1,6 +1,8 @@
 package googlereader;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -175,6 +177,27 @@ public class FeedSourceList {
     save("empty");
   }
 
+  public ArrayList<String> readLabelFeed(String filename) {
+    FileReader fr = null;
+    String filePath = SAVE_DIR + filename + ".label";
+    try {
+      ArrayList<String> feeds = new ArrayList<String>();
+      fr = new FileReader(filePath);
+      BufferedReader br = new BufferedReader(fr);
+      String line;
+      while ( (line = br.readLine()) != null ) {
+        feeds.add(line);
+        System.out.println(line);
+      }
+      fr.close();
+      br.close();
+      return feeds;
+    } catch ( IOException ex ) {
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
   public void saveTags() {
     FileWriter fw = null;
     try {
@@ -196,5 +219,25 @@ public class FeedSourceList {
         ex.printStackTrace();
       }
     }
+  }
+
+  public void readTags() {
+    FileReader fr = null;
+    try {
+      String filename = SAVE_DIR + "taglist";
+      File directory = new File("./", SAVE_DIR);
+      if ( !directory.exists() ) {
+        return;
+      }
+      fr = new FileReader(filename);
+      BufferedReader br = new BufferedReader(fr);
+      String line;
+      while ( (line = br.readLine()) != null ) {
+        tagMap.put(line, new Tag(line));
+      }
+    } catch ( IOException ex ) {
+      ex.printStackTrace();
+    }
+    System.out.println("tags : 読み込み完了");
   }
 }
