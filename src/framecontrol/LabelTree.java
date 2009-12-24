@@ -75,19 +75,25 @@ public class LabelTree extends JTree {
           leaf = new LabelTreeNode(feed);
         } else {
           leaf.setLeafIcon(ImageGet.readImage(feed));
-          System.out.println(ImageGet.doGetHashString(feed)+".png");
+          tree.add(leaf);
+          System.out.println(ImageGet.doGetHashString(feed) + ".png");
         }
-        tree.add(leaf);
       }
       root.add(tree);
     }
     LabelTreeNode tree = new LabelTreeNode("(empty)");
     root.add(tree);
     ArrayList<String> emptyFeeds = fs.readLabelFeed("empty");
-    for ( String feed : emptyFeeds ) {
-      LabelTreeNode leaf = new LabelTreeNode(feed);
-      leaf.setLeafIcon(LeafIcon);
-      tree.add(leaf);
+    LabelTreeNode leaf = null;
+    for ( int i = 0; i < emptyFeeds.size(); ++i ) {
+      String feed = emptyFeeds.get(i);
+      if ( i % 2 == 0 ) {
+        leaf = new LabelTreeNode(feed);
+      } else {
+        leaf.setLeafIcon(ImageGet.readImage(feed));
+        tree.add(leaf);
+        System.out.println(ImageGet.doGetHashString(feed) + ".png");
+      }
     }
 
     DefaultTreeModel model = new DefaultTreeModel(root);

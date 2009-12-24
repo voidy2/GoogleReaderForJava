@@ -33,6 +33,8 @@ public class Main {
     //gapi.getUnreadCount();
    // gapi.getFsList().saveAllLabel();
    // gapi.getFsList().saveTags();
+    //gapi.getFsList().saveFavicons();
+    //未読数も表示したい
     gapi.getFsList().readTags();
 
     new framecontrol.MainFrame(gapi);
