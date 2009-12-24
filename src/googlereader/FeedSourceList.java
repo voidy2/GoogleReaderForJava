@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import networkaccess.ImageGet;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -158,6 +159,7 @@ public class FeedSourceList {
       fw = new FileWriter(filename);
       for ( FeedSource feedSource : getFsList(tag) ) {
         fw.write(feedSource.getTitle() + "\n");
+        fw.write(feedSource.getHtmlUrl() + "\n");
       }
     } catch ( IOException ex ) {
       ex.printStackTrace();
@@ -167,6 +169,13 @@ public class FeedSourceList {
       } catch ( IOException ex ) {
         ex.printStackTrace();
       }
+    }
+  }
+
+  public void saveFavicons() {
+    for ( FeedSource fs : fsList ) {
+      System.out.println(fs.getHtmlUrl());
+      ImageGet.saveFavicon(fs.getHtmlUrl());
     }
   }
 

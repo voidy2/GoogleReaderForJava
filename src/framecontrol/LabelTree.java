@@ -15,6 +15,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
+import networkaccess.ImageGet;
 
 /**
  * JTreeを継承したラベルを表示するコンポーネント
@@ -67,9 +68,15 @@ public class LabelTree extends JTree {
       tree.setOpenIcon(OpenIcon);
       tree.setClosedIcon(ClosedIcon);
       ArrayList<String> feeds = fs.readLabelFeed(labelName);
-      for ( String feed : feeds ) {
-        LabelTreeNode leaf = new LabelTreeNode(feed);
-        leaf.setLeafIcon(LeafIcon);
+      LabelTreeNode leaf = null;
+      for ( int i = 0; i < feeds.size(); ++i ) {
+        String feed = feeds.get(i);
+        if ( i % 2 == 0 ) {
+          leaf = new LabelTreeNode(feed);
+        } else {
+          leaf.setLeafIcon(ImageGet.readImage(feed));
+          System.out.println(ImageGet.doGetHashString(feed)+".png");
+        }
         tree.add(leaf);
       }
       root.add(tree);

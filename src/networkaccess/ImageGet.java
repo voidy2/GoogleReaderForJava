@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javax.swing.ImageIcon;
 
 /**
  * 画像をURLから取得する
@@ -108,5 +109,10 @@ public class ImageGet {
       s += hex;
     }
     return s;
+  }
+
+  public static ImageIcon readImage(String htmlUrl){
+    String path = SAVE_DIR + doGetHashString(htmlUrl)+".png";
+    return new ImageIcon(path);
   }
 }
