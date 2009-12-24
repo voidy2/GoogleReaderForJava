@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package framecontrol;
 
 import java.awt.Component;
@@ -9,7 +5,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
- *
+ * ラベルごとにアイコンを変更するためのDefaultTreeCellRendererを継承するレンダラ
  * @author voidy21
  */
 @SuppressWarnings( "serial" )
