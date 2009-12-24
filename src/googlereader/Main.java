@@ -32,6 +32,7 @@ public class Main {
     gapi.doGetSubscriptionFeedList();
     //gapi.getUnreadCount();
     gapi.getFsList().saveAllLabel();
+    gapi.getFsList().saveTags();
     new framecontrol.MainFrame(gapi);
   }
 }

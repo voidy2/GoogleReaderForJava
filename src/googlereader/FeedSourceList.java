@@ -174,4 +174,27 @@ public class FeedSourceList {
     }
     save("empty");
   }
+
+  public void saveTags() {
+    FileWriter fw = null;
+    try {
+      String filename = SAVE_DIR + "taglist";
+      File directory = new File("./", SAVE_DIR);
+      if ( !directory.exists() ) {
+        directory.mkdirs();
+      }
+      fw = new FileWriter(filename);
+      for ( String tag : tagMap.keySet() ) {
+        fw.write(tag + "\n");
+      }
+    } catch ( IOException ex ) {
+      ex.printStackTrace();
+    } finally {
+      try {
+        fw.close();
+      } catch ( IOException ex ) {
+        ex.printStackTrace();
+      }
+    }
+  }
 }
