@@ -3,6 +3,8 @@ package framecontrol;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -51,6 +53,29 @@ public class LabelTreeNode extends DefaultMutableTreeNode {
 
   public void setOpenIcon(Icon OpenIcon) {
     this.OpenIcon = OpenIcon;
+  }
+
+  public void setClosedIcon(String filename) {
+    setClosedIcon(doGetImageIcon(filename));
+  }
+
+  public void setLeafIcon(String filename) {
+    setLeafIcon(doGetImageIcon(filename));
+  }
+
+  public void setOpenIcon(String filename) {
+    setOpenIcon(doGetImageIcon(filename));
+  }
+
+  private Icon doGetImageIcon(String filename) {
+    ImageIcon icon = null;
+    try {
+      Image image = ImageIO.read(new File(filename));
+      icon = new ImageIcon(image.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
+    } catch ( IOException ex ) {
+      System.err.println(ex);
+    }
+    return icon;
   }
 
   public void setIconsize(int iconsize) {
