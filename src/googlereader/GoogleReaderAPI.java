@@ -28,6 +28,7 @@ public class GoogleReaderAPI {
   private String sid;
   private String t_token;
   private FeedSourceList fsList;
+  private boolean isOnline = true;
 
   /**
    * コンストラクタ
@@ -78,6 +79,7 @@ public class GoogleReaderAPI {
       System.out.println("URLEncoderに失敗\n" + ex);
     } catch ( IOException ex ) {
       System.out.println("不正なストリーム\n" + ex);
+      isOnline = false;
     }
   }
 

@@ -148,28 +148,17 @@ public class FeedSourceList {
   }
 
   public void save(String label) {
-    FileWriter fw = null;
-    try {
-      Tag tag = new Tag(label);
-      String filename = SAVE_DIR + tag.getSmartName() + ".label";
-      File directory = new File("./", SAVE_DIR);
-      if ( !directory.exists() ) {
-        directory.mkdirs();
-      }
-      fw = new FileWriter(filename);
-      for ( FeedSource feedSource : getFsList(tag) ) {
-        fw.write(feedSource.getTitle() + "\n");
-        fw.write(feedSource.getHtmlUrl() + "\n");
-      }
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
-    } finally {
-      try {
-        fw.close();
-      } catch ( IOException ex ) {
-        ex.printStackTrace();
-      }
+    Tag tag = new Tag(label);
+    String filename = tag.getSmartName() + ".label";
+    List<FeedSource> fslist = getFsList(tag);
+    String[] ws = new String[fslist.size()];
+    int x = 0;
+    for ( FeedSource feedSource : getFsList(tag) ) {
+      ws[x] = feedSource.getTitle() + "\n";
+      ws[x] += feedSource.getHtmlUrl() + "\n";
+      x++;
     }
+    doSave(filename, ws);
   }
 
   public void saveFavicons() {
@@ -208,26 +197,13 @@ public class FeedSourceList {
   }
 
   public void saveTags() {
-    FileWriter fw = null;
-    try {
-      String filename = SAVE_DIR + "taglist";
-      File directory = new File("./", SAVE_DIR);
-      if ( !directory.exists() ) {
-        directory.mkdirs();
-      }
-      fw = new FileWriter(filename);
-      for ( String tag : tagMap.keySet() ) {
-        fw.write(tag + "\n");
-      }
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
-    } finally {
-      try {
-        fw.close();
-      } catch ( IOException ex ) {
-        ex.printStackTrace();
-      }
+    String filename = "taglist";
+    String[] ws = new String[tagMap.size()];
+    int x = 0;
+    for ( String tag : tagMap.keySet() ) {
+      ws[x++] = tag + "\n";
     }
+    doSave(filename, ws);
   }
 
   public void readTags() {
@@ -248,5 +224,52 @@ public class FeedSourceList {
       ex.printStackTrace();
     }
     System.out.println("tags : 読み込み完了");
+  }
+
+  public void saveSubscriptions() {
+    String filename = "sublist";
+    String[] ws = new String[fsList.size()];
+    int x = 0;
+    for ( FeedSource fs : fsList ) {
+      ws[x] = fs.getUrl() + "\n";
+      ws[x] += fs.getTitle() + "\n";
+      ws[x] += fs.getLink() + "\n";
+      ws[x] += fs.getSortId() + "\n";
+      ws[x] += fs.getUnreadCount() + "\n";
+      ws[x] += "{";
+      int size = fs.getTags().size();
+      for ( int i = 0; i < size; i++ ) {
+        ws[x] += fs.getTags().get(i).getSmartName();
+        if ( i != size - 1 ) {
+          ws[x] += ",";
+        }
+      }
+      ws[x] += "}";
+      x++;
+    }
+    doSave(filename, ws);
+  }
+
+  private void doSave(String saveFilename, String[] writeString) {
+    FileWriter fw = null;
+    try {
+      String filename = SAVE_DIR + saveFilename;
+      File directory = new File("./", SAVE_DIR);
+      if ( !directory.exists() ) {
+        directory.mkdirs();
+      }
+      fw = new FileWriter(filename);
+      for ( String str : writeString ) {
+        fw.write(str);
+      }
+    } catch ( IOException ex ) {
+      ex.printStackTrace();
+    } finally {
+      try {
+        fw.close();
+      } catch ( IOException ex ) {
+        ex.printStackTrace();
+      }
+    }
   }
 }
