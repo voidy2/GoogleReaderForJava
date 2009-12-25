@@ -30,7 +30,7 @@ public class Main {
     //System.out.println(gapi.getUnreadCount());
     //gapi.doGetLabelList();
     //gapi.doGetSubscriptionFeedList();
-    //gapi.getUnreadCount();
+    gapi.getUnreadCount();
     //gapi.getFsList().saveAllLabel();
     //gapi.getFsList().saveTags();
     //gapi.getFsList().saveSubscriptions();

@@ -1,6 +1,8 @@
 package framecontrol;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -20,6 +22,9 @@ public class LabelTreeCellRenderer extends DefaultTreeCellRenderer {
     setLeafIcon(node.getLeafIcon());
     setOpenIcon(node.getOpenIcon());
     setClosedIcon(node.getClosedIcon());
+    setBackgroundSelectionColor(Color.YELLOW);
+    setTextSelectionColor(Color.BLUE);
+    setFont(new Font("メイリオ", Font.PLAIN, 16));
 
     return super.getTreeCellRendererComponent(
             tree, value,

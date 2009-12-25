@@ -14,7 +14,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
 
 /**
  *
@@ -120,9 +119,10 @@ public class MainFrame extends JFrame
   }
 
   public void valueChanged(TreeSelectionEvent e) {
-    TreePath[] paths = e.getPaths();
-    if ( e.isAddedPath() ) {
-      ta.setText(paths[0].toString());
+    LabelTree tree1 = ( LabelTree ) e.getSource();
+    LabelTreeNode node = (LabelTreeNode) tree1.getLastSelectedPathComponent();
+    if(node!=null){
+      ta.setText(""+node.getDepth());
     }
   }
 }
