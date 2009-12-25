@@ -147,7 +147,7 @@ public class GoogleReaderAPI {
    * @param ap 指定する付加パラメータ
    * @return 取得したXMLフィード
    */
-  public Element getAtomFeed(String atomState, AtomPrameters ap) {
+  public Element getAtomFeed(String atomState, AtomParameters ap) {
     String url = URI_PREFIXE_ATOM + atomState + ap.getParameters();
     return getFeed(url);
   }
@@ -168,7 +168,7 @@ public class GoogleReaderAPI {
    * 未読アイテムを返す
    * @param ap 付加指定するパラメータ
    */
-  public void doGetUnreadFeed(AtomPrameters ap) {
+  public void doGetUnreadFeed(AtomParameters ap) {
     ap.setExclude_target(new Tag(ATOM_STATE_READ));
     Element root = getAtomFeed(ATOM_STATE_READING_LIST, ap);
     //dispDom(root, 0);
@@ -179,7 +179,7 @@ public class GoogleReaderAPI {
    * スター付きアイテムを返す
    * @param ap 付加指定するパラメータ
    */
-  public void doGetStarredFeed(AtomPrameters ap) {
+  public void doGetStarredFeed(AtomParameters ap) {
     Element root = getAtomFeed(ATOM_STATE_STARRED, ap);
     //dispDom(root, 0);
     dispEntries(new Entries(root));
@@ -189,16 +189,19 @@ public class GoogleReaderAPI {
    * 指定したラベルのアイテムを返す
    * @param tag 指定するラベル
    * @param ap 付加指定するパラメータ
+   * @return 取得したxml
    */
-  public void doGetLabelFeed(Tag tag, AtomPrameters ap) {
+  public Node doGetLabelFeed(Tag tag, AtomParameters ap) {
     try {
       String tagName = URLEncoder.encode(tag.getName(), "UTF-8");
       Element root = getAtomFeed(tagName, ap);
       //dispDom(root, 0);
       dispEntries(new Entries(root));
+      return root;
     } catch ( UnsupportedEncodingException ex ) {
       System.out.println(ex);
     }
+    return null;
   }
 
   /**
