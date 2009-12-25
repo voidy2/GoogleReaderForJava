@@ -30,6 +30,11 @@ public class GoogleReaderAPI {
   private FeedSourceList fsList;
   private boolean isOnline = true;
 
+  public GoogleReaderAPI() {
+    isOnline = false;
+    this.fsList = new FeedSourceList();
+  }
+
   /**
    * コンストラクタ
    * @param userId Googleアカウントのユーザ名

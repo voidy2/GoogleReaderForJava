@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package googlereader;
 
 import java.io.BufferedReader;
@@ -27,10 +23,11 @@ public class Main {
     BufferedReader br = new BufferedReader(fr);
     String username = br.readLine();
     String password = br.readLine();
-    GoogleReaderAPI gapi = new GoogleReaderAPI(username, password);
-    gapi.getFsList().readSubscriptions();
+    GoogleReaderAPI gapi = new GoogleReaderAPI(username,password);
     gapi.getFsList().readTags();
-    System.out.println(gapi.getUnreadCount());
+    gapi.getFsList().readSubscriptions();
+   
+    //System.out.println(gapi.getUnreadCount());
     //gapi.doGetLabelList();
     //gapi.doGetSubscriptionFeedList();
     //gapi.getUnreadCount();
@@ -39,7 +36,7 @@ public class Main {
     //gapi.getFsList().saveSubscriptions();
 
     //gapi.getFsList().saveFavicons();
-    //未読数も表示したい
+    //購読リストと未読数を保存するべき
 
 
     new framecontrol.MainFrame(gapi);

@@ -57,7 +57,8 @@ public class LabelTree extends JTree {
   private void doMakeLabelTree() {
     FeedSourceList fs = gapi.getFsList();
     Collection<Tag> labels = fs.getTagList().values();
-    LabelTreeNode root = new LabelTreeNode("GoogleReader("+gapi.getUnreadCount()+")");
+    LabelTreeNode root = new LabelTreeNode(
+            "GoogleReader("+gapi.getFsList().getUnreadCount()+")");
     root.setOpenIcon(OpenIcon);
     root.setClosedIcon(ClosedIcon);
     for ( Tag label : labels ) {
