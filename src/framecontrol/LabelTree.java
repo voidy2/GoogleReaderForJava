@@ -76,7 +76,6 @@ public class LabelTree extends JTree {
         } else {
           leaf.setLeafIcon(ImageGet.readImage(feed));
           tree.add(leaf);
-          System.out.println(ImageGet.doGetHashString(feed) + ".png");
         }
       }
       root.add(tree);
@@ -92,7 +91,6 @@ public class LabelTree extends JTree {
       } else {
         leaf.setLeafIcon(ImageGet.readImage(feed));
         tree.add(leaf);
-        System.out.println(ImageGet.doGetHashString(feed) + ".png");
       }
     }
 

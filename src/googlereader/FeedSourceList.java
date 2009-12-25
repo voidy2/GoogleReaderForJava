@@ -163,7 +163,6 @@ public class FeedSourceList {
 
   public void saveFavicons() {
     for ( FeedSource fs : fsList ) {
-      System.out.println(fs.getHtmlUrl());
       ImageGet.saveFavicon(fs.getHtmlUrl());
     }
   }
@@ -176,24 +175,13 @@ public class FeedSourceList {
   }
 
   public ArrayList<String> readLabelFeed(String filename) {
-    FileReader fr = null;
-    String filePath = SAVE_DIR + filename + ".label";
-    try {
-      ArrayList<String> feeds = new ArrayList<String>();
-      fr = new FileReader(filePath);
-      BufferedReader br = new BufferedReader(fr);
-      String line;
-      while ( (line = br.readLine()) != null ) {
-        feeds.add(line);
-        System.out.println(line);
-      }
-      fr.close();
-      br.close();
-      return feeds;
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
+    String filePath = filename + ".label";
+    ArrayList<String> strs = doRead(filePath);
+    ArrayList<String> feeds = new ArrayList<String>();
+    for ( String line : strs ) {
+      feeds.add(line);
     }
-    return null;
+    return feeds;
   }
 
   public void saveTags() {
@@ -207,23 +195,50 @@ public class FeedSourceList {
   }
 
   public void readTags() {
-    FileReader fr = null;
-    try {
-      String filename = SAVE_DIR + "taglist";
-      File directory = new File("./", SAVE_DIR);
-      if ( !directory.exists() ) {
-        return;
-      }
-      fr = new FileReader(filename);
-      BufferedReader br = new BufferedReader(fr);
-      String line;
-      while ( (line = br.readLine()) != null ) {
-        tagMap.put(line, new Tag(line));
-      }
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
+    String filename = "taglist";
+    ArrayList<String> strs = doRead(filename);
+    for ( String line : strs ) {
+      tagMap.put(line, new Tag(line));
     }
     System.out.println("tags : 読み込み完了");
+  }
+
+  public void readSubscriptions() {
+    String filename = "sublist";
+    ArrayList<String> strs = doRead(filename);
+    int x = 0;
+    for ( String line : strs ) {
+      FeedSource fs = new FeedSource();
+      readCaseSetSubs(x % 6, line, fs);
+      fsList.add(fs);
+      x++;
+    }
+  }
+
+  private void readCaseSetSubs(int x, String line, FeedSource fs) {
+    switch ( x ) {
+      case 0:
+        fs.setUrl(line);
+        break;
+      case 1:
+        fs.setTitle(line);
+        break;
+      case 2:
+        fs.setHtmlUrl(line);
+        break;
+      case 3:
+        fs.setSortId(line);
+        break;
+      case 4:
+        int count = Integer.parseInt(line);
+        fs.setUnreadCount(count);
+        break;
+      case 5:
+        String[] tags = line.split(",");
+        for ( String tag : tags ) {
+          fs.getTags().add(new Tag(tag));
+        }
+    }
   }
 
   public void saveSubscriptions() {
@@ -233,10 +248,9 @@ public class FeedSourceList {
     for ( FeedSource fs : fsList ) {
       ws[x] = fs.getUrl() + "\n";
       ws[x] += fs.getTitle() + "\n";
-      ws[x] += fs.getLink() + "\n";
+      ws[x] += fs.getHtmlUrl() + "\n";
       ws[x] += fs.getSortId() + "\n";
       ws[x] += fs.getUnreadCount() + "\n";
-      ws[x] += "{";
       int size = fs.getTags().size();
       for ( int i = 0; i < size; i++ ) {
         ws[x] += fs.getTags().get(i).getSmartName();
@@ -244,7 +258,7 @@ public class FeedSourceList {
           ws[x] += ",";
         }
       }
-      ws[x] += "}";
+      ws[x] += "\n";
       x++;
     }
     doSave(filename, ws);
@@ -271,5 +285,26 @@ public class FeedSourceList {
         ex.printStackTrace();
       }
     }
+  }
+
+  private ArrayList<String> doRead(String readFilename) {
+    ArrayList<String> strs = new ArrayList<String>();
+    FileReader fr = null;
+    try {
+      String filename = SAVE_DIR + readFilename;
+      File directory = new File("./", SAVE_DIR);
+      if ( !directory.exists() ) {
+        throw new IOException("Error : ディレクトリが存在しない");
+      }
+      fr = new FileReader(filename);
+      BufferedReader br = new BufferedReader(fr);
+      String line;
+      while ( (line = br.readLine()) != null ) {
+        strs.add(line);
+      }
+    } catch ( IOException ex ) {
+      ex.printStackTrace();
+    }
+    return strs;
   }
 }

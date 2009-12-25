@@ -28,11 +28,13 @@ public class Main {
     String username = br.readLine();
     String password = br.readLine();
     GoogleReaderAPI gapi = new GoogleReaderAPI(username,password);
-    gapi.doGetLabelList();
-    gapi.doGetSubscriptionFeedList();
+    //gapi.doGetLabelList();
+    //gapi.doGetSubscriptionFeedList();
     //gapi.getUnreadCount();
-    gapi.getFsList().saveAllLabel();
-    gapi.getFsList().saveTags();
+    //gapi.getFsList().saveAllLabel();
+    //gapi.getFsList().saveTags();
+    //gapi.getFsList().saveSubscriptions();
+    gapi.getFsList().readSubscriptions();
     //gapi.getFsList().saveFavicons();
     //未読数も表示したい
     gapi.getFsList().readTags();
