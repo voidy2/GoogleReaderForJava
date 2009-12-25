@@ -20,6 +20,7 @@ public class FeedSourceList {
 
   private List<FeedSource> fsList = new ArrayList<FeedSource>();
   private HashMap<String, Tag> tagMap = new HashMap<String, Tag>();
+  private HashMap<String, Integer> unreadMap = new HashMap<String, Integer>();
   private int unreadCount;
   public static final String SAVE_DIR = "./label/";
 
@@ -97,23 +98,63 @@ public class FeedSourceList {
     fsList.add(fs);
   }
 
+  public void doSetUnreadCount(Node xmlUnreadList) {
+    if ( xmlUnreadList.hasChildNodes() ) {
+      NodeList nList = xmlUnreadList.getChildNodes();
+      for ( int i = 0; i < nList.getLength(); i++ ) {
+        Node n = nList.item(i);
+        String nodeName = n.getNodeName();
+        if ( nodeName.equals("list") ) {
+          NodeList nl = n.getChildNodes();
+          for ( int j = 0; j < nl.getLength(); j++ ) {
+            doSetUnreadCountItem(nl.item(j));
+          }
+        }
+      }
+      doSetUnreadCount();
+    }
+  }
+
+  private void doSetUnreadCountItem(Node n) {
+    NodeList nl = n.getChildNodes();
+    String url = "";
+    for ( int i = 0; i < nl.getLength(); i++ ) {
+      String nodeName = nl.item(i).getNodeName();
+      if ( nodeName.equals("string") ) {
+        String source = nl.item(i).getFirstChild().getNodeValue();
+        url = source;
+      } else if ( nodeName.equals("number") ) {
+        String attr = nl.item(i).getAttributes().item(0).getNodeValue();
+        if ( attr.equals("count") ) {
+          Integer count = new Integer(
+                  nl.item(i).getChildNodes().item(0).getNodeValue());
+          unreadMap.put(url, count);
+        }
+      }
+    }
+  }
+
   private void doSetUnreadCount() {
     int allUnreadCount = 0;
     int size = fsList.size();
     for ( int i = 0; i < size; ++i ) {
       FeedSource feedSource = fsList.get(i);
-      int count = feedSource.getUnreadCount();
-      if ( feedSource.getTags().get(0).getName() != null ) {
-        Tag tag = tagMap.get(feedSource.getTags().get(0).getName());
-        int tagUnreadCount = tag.getUnreadCount();
-        tag.setUnreadCount(tagUnreadCount + count);
-        //同じURLのフィードはカウントしないようにしたい
-        //ここに処理を書く
-        //HashMapを使うといいと思う
-        //
-        allUnreadCount += count;
-      } else {
-        allUnreadCount += count;
+      int count = 0;
+      if ( unreadMap.containsKey(feedSource.getUrl()) ) {
+        count = unreadMap.get(feedSource.getUrl());
+        feedSource.setUnreadCount(count);
+      }
+      //ureadMapに無いものは0にする
+      feedSource.setUnreadCount(count);
+      allUnreadCount += count;
+    }
+    size = unreadMap.size();
+    for ( String s : unreadMap.keySet() ) {
+      if ( s.substring(0, 4).equals("user") ) {
+        int count = unreadMap.get(s);
+        if ( tagMap.containsKey(s) ) {
+          tagMap.get(s).setUnreadCount(count);
+        }
       }
     }
     unreadCount = allUnreadCount;
@@ -207,10 +248,15 @@ public class FeedSourceList {
     String filename = "sublist";
     ArrayList<String> strs = doRead(filename);
     int x = 0;
+    FeedSource fs = null;
     for ( String line : strs ) {
-      FeedSource fs = new FeedSource();
+      if ( x % 6 == 0 ) {
+        fs = new FeedSource();
+      }
       readCaseSetSubs(x % 6, line, fs);
-      fsList.add(fs);
+      if ( x % 6 - 1 == 0 ) {
+        fsList.add(fs);
+      }
       x++;
     }
   }
@@ -253,7 +299,7 @@ public class FeedSourceList {
       ws[x] += fs.getUnreadCount() + "\n";
       int size = fs.getTags().size();
       for ( int i = 0; i < size; i++ ) {
-        ws[x] += fs.getTags().get(i).getSmartName();
+        ws[x] += fs.getTags().get(i).getName();
         if ( i != size - 1 ) {
           ws[x] += ",";
         }

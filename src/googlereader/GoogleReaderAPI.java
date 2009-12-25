@@ -155,7 +155,7 @@ public class GoogleReaderAPI {
     //だいたいなのは1000件以上未読がある場合はきちんとした数字をAPIが返してくれないため
     String url = URI_PREFIXE_API + API_LIST_UNREAD_COUNT;
     Element root = getFeed(url);
-    //fsList = new FeedSourceList(root);
+    fsList.doSetUnreadCount(root);
     return fsList.getUnreadCount();
   }
 

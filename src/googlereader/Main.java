@@ -21,23 +21,26 @@ public class Main {
    * @throws FileNotFoundException
    * @throws IOException
    */
-  public static void main(String[] args) 
+  public static void main(String[] args)
           throws FileNotFoundException, IOException {
     FileReader fr = new FileReader(new File("userdata.txt"));
     BufferedReader br = new BufferedReader(fr);
     String username = br.readLine();
     String password = br.readLine();
-    GoogleReaderAPI gapi = new GoogleReaderAPI(username,password);
+    GoogleReaderAPI gapi = new GoogleReaderAPI(username, password);
+    gapi.getFsList().readSubscriptions();
+    gapi.getFsList().readTags();
+    System.out.println(gapi.getUnreadCount());
     //gapi.doGetLabelList();
     //gapi.doGetSubscriptionFeedList();
     //gapi.getUnreadCount();
     //gapi.getFsList().saveAllLabel();
     //gapi.getFsList().saveTags();
     //gapi.getFsList().saveSubscriptions();
-    gapi.getFsList().readSubscriptions();
+
     //gapi.getFsList().saveFavicons();
     //未読数も表示したい
-    gapi.getFsList().readTags();
+
 
     new framecontrol.MainFrame(gapi);
   }

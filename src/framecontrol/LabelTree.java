@@ -1,5 +1,6 @@
 package framecontrol;
 
+import googlereader.FeedSource;
 import googlereader.FeedSourceList;
 import googlereader.GoogleReaderAPI;
 import googlereader.Tag;
@@ -8,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -55,7 +57,7 @@ public class LabelTree extends JTree {
   private void doMakeLabelTree() {
     FeedSourceList fs = gapi.getFsList();
     Collection<Tag> labels = fs.getTagList().values();
-    LabelTreeNode root = new LabelTreeNode("GoogleReader");
+    LabelTreeNode root = new LabelTreeNode("GoogleReader("+gapi.getUnreadCount()+")");
     root.setOpenIcon(OpenIcon);
     root.setClosedIcon(ClosedIcon);
     for ( Tag label : labels ) {
@@ -63,20 +65,19 @@ public class LabelTree extends JTree {
         continue;
       }
       String labelName = label.getSmartName();
+      int uc = label.getUnreadCount();
       System.err.println(labelName + " : 読み込み完了");
-      LabelTreeNode tree = new LabelTreeNode(labelName);
+      LabelTreeNode tree = new LabelTreeNode(labelName+"("+uc+")");
       tree.setOpenIcon(OpenIcon);
       tree.setClosedIcon(ClosedIcon);
-      ArrayList<String> feeds = fs.readLabelFeed(labelName);
+      List<FeedSource> feeds = fs.getFsList(new Tag(label.getName()));
       LabelTreeNode leaf = null;
-      for ( int i = 0; i < feeds.size(); ++i ) {
-        String feed = feeds.get(i);
-        if ( i % 2 == 0 ) {
-          leaf = new LabelTreeNode(feed);
-        } else {
-          leaf.setLeafIcon(ImageGet.readImage(feed));
-          tree.add(leaf);
-        }
+      for ( FeedSource feed: feeds ) {
+        String title = feed.getTitle();
+        int ucf = feed.getUnreadCount();
+        leaf = new LabelTreeNode("(" + ucf + ")" + title);
+        leaf.setLeafIcon(ImageGet.readImage(feed.getHtmlUrl()));
+        tree.add(leaf);
       }
       root.add(tree);
     }
