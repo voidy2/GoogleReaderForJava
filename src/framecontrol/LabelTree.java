@@ -77,6 +77,7 @@ public class LabelTree extends JTree {
         String title = feed.getTitle();
         int ucf = feed.getUnreadCount();
         leaf = new LabelTreeNode("(" + ucf + ")" + title);
+	leaf.setFeedSource(feed);
         leaf.setLeafIcon(ImageGet.readImage(feed.getHtmlUrl()));
         tree.add(leaf);
       }

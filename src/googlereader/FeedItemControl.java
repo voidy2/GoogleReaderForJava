@@ -29,10 +29,8 @@ public class FeedItemControl {
     for ( FeedSource feedSource : flist ) {
       int uc = feedSource.getUnreadCount();
       ap.setCount(uc);
-      System.out.println(uc);
       ap.setExclude_target(new Tag(Const.ATOM_STATE_READ));
       ap.setContinuation(continuation);
-      System.err.println(continuation);
       Element xml = gapi.getAtomFeed(feedSource.getEncodedUrl(), ap);
       loadXml(xml, feedSource);
     }
@@ -41,7 +39,6 @@ public class FeedItemControl {
   public void saveFeedItems(Tag tag) {
     List<FeedSource> flist = gapi.getFsList().getFsList(tag);
     for ( FeedSource feedSource : flist ) {
-      System.out.println(feedSource.getTitle());
       List<FeedItem> fItems = feedSource.getItems();
       int uc = fItems.size();
       ArrayList<String> ws = new ArrayList<String>();
@@ -69,6 +66,15 @@ public class FeedItemControl {
     }
   }
 
+  public void readFeedItems(Tag tag) {
+    List<FeedSource> flist = gapi.getFsList().getFsList(tag);
+    for ( FeedSource feedSource : flist ) {
+      String filename = feedSource.getEncodedUrl() + ".log";
+      ArrayList<String> strs = fileIo.doRead(filename);
+      doSetFeedItems(strs, feedSource);
+    }
+  }
+
   private void loadXml(Element xml, FeedSource fs) {
     NodeList nl = xml.getChildNodes();
     for ( int i = 0; i < nl.getLength(); i++ ) {
@@ -86,5 +92,57 @@ public class FeedItemControl {
 
   public String getContinuation() {
     return continuation;
+  }
+
+  private void readCaseSetSubs(int x, String line, FeedItem fItem) {
+    switch ( x ) {
+      case 0:
+	fItem.setTitle(line);
+	break;
+      case 1:
+	fItem.setTimestamp(Long.parseLong(line));
+	break;
+      case 2:
+	fItem.setLink(line);
+	break;
+      case 3:
+	fItem.setSummary(line);
+	break;
+      case 4:
+	String[] tags = line.split(",");
+	for ( String tag : tags ) {
+	  fItem.getTags().add(new Tag(tag));
+	}
+    }
+  }
+
+  private void doSetFeedItems(ArrayList<String> strs, FeedSource feedSource) {
+    strs.remove(0);
+    strs.remove(0);
+    int x = 0;
+    FeedItem fItem = null;
+    String content = "";
+    for ( String line : strs ) {
+      if ( x % 5 == 0 ) {
+	fItem = new FeedItem();
+      }
+      if ( x % 5 == 3 ) {
+	if ( line.equals("]]") ) {
+	  readCaseSetSubs(3, content, fItem);
+	  content = "";
+	} else {
+	  if ( !line.equals("[[") ) {
+	    content += line;
+	  }
+	  continue;
+	}
+      } else {
+	readCaseSetSubs(x % 5, line, fItem);
+      }
+      if ( x % 5 - 1 == 0 ) {
+	feedSource.getItems().add(fItem);
+      }
+      x++;
+    }
   }
 }

@@ -89,7 +89,7 @@ public class FeedItem {
     } else if ( nName.equals("link") ) {
       String s = nn.getAttributes().item(0).getNodeValue();
       setLink(s);
-    } else if ( nName.equals("summary")) {
+    } else if ( nName.equals("summary") || nName.equals("content")) {
       String s = nn.getFirstChild().getNodeValue();
       setSummary(s);
     }

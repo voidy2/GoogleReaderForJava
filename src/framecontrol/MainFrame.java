@@ -1,9 +1,12 @@
 package framecontrol;
 
 import googlereader.GoogleReaderAPI;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.*;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -30,7 +33,7 @@ public class MainFrame extends JFrame
   private static final String gtk = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
   private static final String nimbus = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
   JList lst;
-  JTextArea ta;
+  JEditorPane ta;
   LabelTree tree;
   GoogleReaderAPI gapi;
   int select;
@@ -57,13 +60,14 @@ public class MainFrame extends JFrame
     this.addKeyListener(this);
     lst.addListSelectionListener(this);
     lst.addKeyListener(this);
-    ta = new JTextArea();
+    ta = new JEditorPane("text/html","");
+    ta.setBackground(Color.WHITE);
+
     ta.addKeyListener(this);
     JScrollPane sp2 = new JScrollPane();
     sp2.getViewport().setView(ta);
 
-    ta.setColumns(40);
-    ta.setRows(20);
+
 
     tree = new LabelTree(gapi);
     tree.addTreeSelectionListener(this);
@@ -122,7 +126,7 @@ public class MainFrame extends JFrame
     LabelTree tree1 = ( LabelTree ) e.getSource();
     LabelTreeNode node = (LabelTreeNode) tree1.getLastSelectedPathComponent();
     if(node!=null){
-      ta.setText(""+node.getDepth());
+      ta.setText(""+node.getFeedSource().getItems().get(0).getSummary());
     }
   }
 }

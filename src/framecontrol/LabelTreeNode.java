@@ -1,5 +1,6 @@
 package framecontrol;
 
+import googlereader.FeedSource;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class LabelTreeNode extends DefaultMutableTreeNode {
   private Icon OpenIcon;
   private Icon ClosedIcon;
   private int iconsize = 18;
+  private FeedSource feedSource;
 
   public LabelTreeNode(Object obj) {
     super(obj);
@@ -73,5 +75,13 @@ public class LabelTreeNode extends DefaultMutableTreeNode {
 
   public Icon getClosedIcon() {
     return ClosedIcon;
+  }
+
+  public FeedSource getFeedSource() {
+    return feedSource;
+  }
+
+  public void setFeedSource(FeedSource feedSource) {
+    this.feedSource = feedSource;
   }
 }
