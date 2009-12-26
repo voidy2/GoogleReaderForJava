@@ -5,9 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import networkaccess.ImageGet;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -45,10 +49,9 @@ public class FeedSourceList {
 
   private void doSetLabelItem(Node n) {
     NodeList nl = n.getChildNodes();
-    FeedSource fs = new FeedSource();
     for ( int i = 0; i < nl.getLength(); i++ ) {
       String attr = nl.item(i).getAttributes().item(0).getNodeValue();
-      String label = nl.item(i).getChildNodes().item(0).getNodeValue();
+      String label = nl.item(i).getFirstChild().getNodeValue();
       if ( attr.equals("id") ) {
         this.tagMap.put(label, new Tag(label));
       }
@@ -128,7 +131,7 @@ public class FeedSourceList {
         if ( attr.equals("count") ) {
           Integer count = new Integer(
                   nl.item(i).getChildNodes().item(0).getNodeValue());
-          unreadMap.put(url, count);
+	    unreadMap.put(url, count);
         }
       }
     }

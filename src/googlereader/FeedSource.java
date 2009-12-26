@@ -18,6 +18,7 @@ public class FeedSource {
   private String sortId;
   private String link;
   private List<Tag> tags = new ArrayList<Tag>();
+  private List<FeedItem> items = new ArrayList<FeedItem>();
 
   public FeedSource(String title, String link) {
     this.title = title;
@@ -63,11 +64,24 @@ public class FeedSource {
     this.sortId = sortId;
   }
 
+  public List<FeedItem> getItems() {
+    return items;
+  }
+
+  public void setItems(List<FeedItem> items) {
+    this.items = items;
+  }
+  
+
+  public String getUrl() {
+    return url;
+  }
+
   /**
    * feed/ から始まるURLエンコードされたURLを返す
    * @return URLエンコードされたURL
    */
-  public String getUrl() {
+  public String getEncodedUrl() {
     try {
       return URLEncoder.encode(url, "UTF-8");
     } catch ( UnsupportedEncodingException ex ) {
