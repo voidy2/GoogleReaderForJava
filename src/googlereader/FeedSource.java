@@ -1,5 +1,7 @@
 package googlereader;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +63,17 @@ public class FeedSource {
     this.sortId = sortId;
   }
 
+  /**
+   * feed/ から始まるURLエンコードされたURLを返す
+   * @return URLエンコードされたURL
+   */
   public String getUrl() {
-    return url;
+    try {
+      return URLEncoder.encode(url, "UTF-8");
+    } catch ( UnsupportedEncodingException ex ) {
+      ex.printStackTrace();
+    }
+    return null;
   }
 
   public void setUrl(String url) {
