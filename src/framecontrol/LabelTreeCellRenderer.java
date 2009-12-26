@@ -24,7 +24,6 @@ public class LabelTreeCellRenderer extends DefaultTreeCellRenderer {
     setClosedIcon(node.getClosedIcon());
     setBackgroundSelectionColor(Color.YELLOW);
     setTextSelectionColor(Color.BLUE);
-    setFont(new Font("メイリオ", Font.PLAIN, 16));
 
     return super.getTreeCellRendererComponent(
             tree, value,
