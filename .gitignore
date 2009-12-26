@@ -4,3 +4,4 @@ dist/
 *.properties
 img/favicon/
 label/
+log/

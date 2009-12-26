@@ -1,17 +1,9 @@
 package googlereader;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import fileio.FileIO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import networkaccess.ImageGet;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -27,6 +19,7 @@ public class FeedSourceList {
   private HashMap<String, Integer> unreadMap = new HashMap<String, Integer>();
   private int unreadCount;
   public static final String SAVE_DIR = "./label/";
+  private FileIO fileIo = new  FileIO(SAVE_DIR);
 
   public FeedSourceList() {
   }
@@ -53,7 +46,7 @@ public class FeedSourceList {
       String attr = nl.item(i).getAttributes().item(0).getNodeValue();
       String label = nl.item(i).getFirstChild().getNodeValue();
       if ( attr.equals("id") ) {
-        this.tagMap.put(label, new Tag(label));
+	this.tagMap.put(label, new Tag(label));
       }
     }
   }
@@ -62,11 +55,11 @@ public class FeedSourceList {
     if ( xml.hasChildNodes() ) {
       NodeList nList = xml.getChildNodes();
       for ( int i = 0; i < nList.getLength(); i++ ) {
-        Node n = nList.item(i);
-        String nodeName = n.getNodeName();
-        if ( nodeName.equals("list") ) {
-          return n.getChildNodes();
-        }
+	Node n = nList.item(i);
+	String nodeName = n.getNodeName();
+	if ( nodeName.equals("list") ) {
+	  return n.getChildNodes();
+	}
       }
     }
     return null;
@@ -78,24 +71,24 @@ public class FeedSourceList {
     for ( int i = 0; i < nl.getLength(); ++i ) {
       String nodeName = nl.item(i).getNodeName();
       if ( nodeName.equals("string") ) {
-        String attr = nl.item(i).getAttributes().item(0).getNodeValue();
-        String value = nl.item(i).getChildNodes().item(0).getNodeValue();
-        if ( attr.equals("id") ) {
-          fs.setUrl(value);
-        } else if ( attr.equals("title") ) {
-          fs.setTitle(value);
-        } else if ( attr.equals("sortid") ) {
-          fs.setSortId(value);
-        } else if ( attr.equals("htmlUrl") ) {
-          fs.setHtmlUrl(value);
-        }
+	String attr = nl.item(i).getAttributes().item(0).getNodeValue();
+	String value = nl.item(i).getChildNodes().item(0).getNodeValue();
+	if ( attr.equals("id") ) {
+	  fs.setUrl(value);
+	} else if ( attr.equals("title") ) {
+	  fs.setTitle(value);
+	} else if ( attr.equals("sortid") ) {
+	  fs.setSortId(value);
+	} else if ( attr.equals("htmlUrl") ) {
+	  fs.setHtmlUrl(value);
+	}
       } else if ( nodeName.equals("list") ) {
-        NodeList category = nl.item(i).getChildNodes();
-        for ( int j = 0; j < category.getLength(); ++j ) {
-          Node nls = category.item(j).getChildNodes().item(0);
-          String tag = nls.getChildNodes().item(0).getNodeValue();
-          fs.appendTag(tag);
-        }
+	NodeList category = nl.item(i).getChildNodes();
+	for ( int j = 0; j < category.getLength(); ++j ) {
+	  Node nls = category.item(j).getChildNodes().item(0);
+	  String tag = nls.getChildNodes().item(0).getNodeValue();
+	  fs.appendTag(tag);
+	}
       }
     }
     fsList.add(fs);
@@ -105,14 +98,14 @@ public class FeedSourceList {
     if ( xmlUnreadList.hasChildNodes() ) {
       NodeList nList = xmlUnreadList.getChildNodes();
       for ( int i = 0; i < nList.getLength(); i++ ) {
-        Node n = nList.item(i);
-        String nodeName = n.getNodeName();
-        if ( nodeName.equals("list") ) {
-          NodeList nl = n.getChildNodes();
-          for ( int j = 0; j < nl.getLength(); j++ ) {
-            doSetUnreadCountItem(nl.item(j));
-          }
-        }
+	Node n = nList.item(i);
+	String nodeName = n.getNodeName();
+	if ( nodeName.equals("list") ) {
+	  NodeList nl = n.getChildNodes();
+	  for ( int j = 0; j < nl.getLength(); j++ ) {
+	    doSetUnreadCountItem(nl.item(j));
+	  }
+	}
       }
       doSetUnreadCount();
     }
@@ -124,15 +117,15 @@ public class FeedSourceList {
     for ( int i = 0; i < nl.getLength(); i++ ) {
       String nodeName = nl.item(i).getNodeName();
       if ( nodeName.equals("string") ) {
-        String source = nl.item(i).getFirstChild().getNodeValue();
-        url = source;
+	String source = nl.item(i).getFirstChild().getNodeValue();
+	url = source;
       } else if ( nodeName.equals("number") ) {
-        String attr = nl.item(i).getAttributes().item(0).getNodeValue();
-        if ( attr.equals("count") ) {
-          Integer count = new Integer(
-                  nl.item(i).getChildNodes().item(0).getNodeValue());
-	    unreadMap.put(url, count);
-        }
+	String attr = nl.item(i).getAttributes().item(0).getNodeValue();
+	if ( attr.equals("count") ) {
+	  Integer count = new Integer(
+	    nl.item(i).getChildNodes().item(0).getNodeValue());
+	  unreadMap.put(url, count);
+	}
       }
     }
   }
@@ -144,8 +137,8 @@ public class FeedSourceList {
       FeedSource feedSource = fsList.get(i);
       int count = 0;
       if ( unreadMap.containsKey(feedSource.getUrl()) ) {
-        count = unreadMap.get(feedSource.getUrl());
-        feedSource.setUnreadCount(count);
+	count = unreadMap.get(feedSource.getUrl());
+	feedSource.setUnreadCount(count);
       }
       //ureadMapに無いものは0にする
       feedSource.setUnreadCount(count);
@@ -154,10 +147,10 @@ public class FeedSourceList {
     size = unreadMap.size();
     for ( String s : unreadMap.keySet() ) {
       if ( s.substring(0, 4).equals("user") ) {
-        int count = unreadMap.get(s);
-        if ( tagMap.containsKey(s) ) {
-          tagMap.get(s).setUnreadCount(count);
-        }
+	int count = unreadMap.get(s);
+	if ( tagMap.containsKey(s) ) {
+	  tagMap.get(s).setUnreadCount(count);
+	}
       }
     }
     unreadCount = allUnreadCount;
@@ -179,13 +172,13 @@ public class FeedSourceList {
     List<FeedSource> labelFsList = new ArrayList<FeedSource>();
     for ( FeedSource feedSource : fsList ) {
       if ( !feedSource.getTags().isEmpty() ) {
-        if ( feedSource.isExistTag(label) ) {
-          labelFsList.add(feedSource);
-        }
+	if ( feedSource.isExistTag(label) ) {
+	  labelFsList.add(feedSource);
+	}
       } else {
-        if ( label.getName().equals("empty") ) {
-          labelFsList.add(feedSource);
-        }
+	if ( label.getName().equals("empty") ) {
+	  labelFsList.add(feedSource);
+	}
       }
     }
     return labelFsList;
@@ -195,14 +188,14 @@ public class FeedSourceList {
     Tag tag = new Tag(label);
     String filename = tag.getSmartName() + ".label";
     List<FeedSource> fslist = getFsList(tag);
-    String[] ws = new String[fslist.size()];
+    ArrayList<String> ws = new ArrayList<String>();
     int x = 0;
-    for ( FeedSource feedSource : getFsList(tag) ) {
-      ws[x] = feedSource.getTitle() + "\n";
-      ws[x] += feedSource.getHtmlUrl() + "\n";
-      x++;
+    for ( FeedSource feedSource : fslist ) {
+      String w = feedSource.getTitle() + "\n";
+      w += feedSource.getHtmlUrl() + "\n";
+      ws.add(w);
     }
-    doSave(filename, ws);
+    fileIo.doSave(filename, ws);
   }
 
   public void saveFavicons() {
@@ -220,7 +213,7 @@ public class FeedSourceList {
 
   public ArrayList<String> readLabelFeed(String filename) {
     String filePath = filename + ".label";
-    ArrayList<String> strs = doRead(filePath);
+    ArrayList<String> strs = fileIo.doRead(filePath);
     ArrayList<String> feeds = new ArrayList<String>();
     for ( String line : strs ) {
       feeds.add(line);
@@ -230,17 +223,16 @@ public class FeedSourceList {
 
   public void saveTags() {
     String filename = "taglist";
-    String[] ws = new String[tagMap.size()];
-    int x = 0;
+    ArrayList<String> ws = new ArrayList<String>();
     for ( String tag : tagMap.keySet() ) {
-      ws[x++] = tag + "\n";
+      ws.add(tag + "\n");
     }
-    doSave(filename, ws);
+    fileIo.doSave(filename, ws);
   }
 
   public void readTags() {
     String filename = "taglist";
-    ArrayList<String> strs = doRead(filename);
+    ArrayList<String> strs = fileIo.doRead(filename);
     for ( String line : strs ) {
       tagMap.put(line, new Tag(line));
     }
@@ -249,16 +241,16 @@ public class FeedSourceList {
 
   public void readSubscriptions() {
     String filename = "sublist";
-    ArrayList<String> strs = doRead(filename);
+    ArrayList<String> strs = fileIo.doRead(filename);
     int x = 0;
     FeedSource fs = null;
     for ( String line : strs ) {
       if ( x % 6 == 0 ) {
-        fs = new FeedSource();
+	fs = new FeedSource();
       }
       readCaseSetSubs(x % 6, line, fs);
       if ( x % 6 - 1 == 0 ) {
-        fsList.add(fs);
+	fsList.add(fs);
       }
       x++;
     }
@@ -267,93 +259,48 @@ public class FeedSourceList {
   private void readCaseSetSubs(int x, String line, FeedSource fs) {
     switch ( x ) {
       case 0:
-        fs.setUrl(line);
-        break;
+	fs.setUrl(line);
+	break;
       case 1:
-        fs.setTitle(line);
-        break;
+	fs.setTitle(line);
+	break;
       case 2:
-        fs.setHtmlUrl(line);
-        break;
+	fs.setHtmlUrl(line);
+	break;
       case 3:
-        fs.setSortId(line);
-        break;
+	fs.setSortId(line);
+	break;
       case 4:
-        int count = Integer.parseInt(line);
-        fs.setUnreadCount(count);
-        break;
+	int count = Integer.parseInt(line);
+	fs.setUnreadCount(count);
+	break;
       case 5:
-        String[] tags = line.split(",");
-        for ( String tag : tags ) {
-          fs.getTags().add(new Tag(tag));
-        }
+	String[] tags = line.split(",");
+	for ( String tag : tags ) {
+	  fs.getTags().add(new Tag(tag));
+	}
     }
   }
 
   public void saveSubscriptions() {
     String filename = "sublist";
-    String[] ws = new String[fsList.size()];
-    int x = 0;
+    ArrayList<String> ws = new ArrayList<String>();
     for ( FeedSource fs : fsList ) {
-      ws[x] = fs.getUrl() + "\n";
-      ws[x] += fs.getTitle() + "\n";
-      ws[x] += fs.getHtmlUrl() + "\n";
-      ws[x] += fs.getSortId() + "\n";
-      ws[x] += fs.getUnreadCount() + "\n";
+      String w = fs.getUrl() + "\n";
+      w += fs.getTitle() + "\n";
+      w += fs.getHtmlUrl() + "\n";
+      w += fs.getSortId() + "\n";
+      w += fs.getUnreadCount() + "\n";
       int size = fs.getTags().size();
       for ( int i = 0; i < size; i++ ) {
-        ws[x] += fs.getTags().get(i).getName();
-        if ( i != size - 1 ) {
-          ws[x] += ",";
-        }
+	w += fs.getTags().get(i).getName();
+	if ( i != size - 1 ) {
+	  w += ",";
+	}
       }
-      ws[x] += "\n";
-      x++;
+      w += "\n";
+      ws.add(w);
     }
-    doSave(filename, ws);
-  }
-
-  private void doSave(String saveFilename, String[] writeString) {
-    FileWriter fw = null;
-    try {
-      String filename = SAVE_DIR + saveFilename;
-      File directory = new File("./", SAVE_DIR);
-      if ( !directory.exists() ) {
-        directory.mkdirs();
-      }
-      fw = new FileWriter(filename);
-      for ( String str : writeString ) {
-        fw.write(str);
-      }
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
-    } finally {
-      try {
-        fw.close();
-      } catch ( IOException ex ) {
-        ex.printStackTrace();
-      }
-    }
-  }
-
-  private ArrayList<String> doRead(String readFilename) {
-    ArrayList<String> strs = new ArrayList<String>();
-    FileReader fr = null;
-    try {
-      String filename = SAVE_DIR + readFilename;
-      File directory = new File("./", SAVE_DIR);
-      if ( !directory.exists() ) {
-        throw new IOException("Error : ディレクトリが存在しない");
-      }
-      fr = new FileReader(filename);
-      BufferedReader br = new BufferedReader(fr);
-      String line;
-      while ( (line = br.readLine()) != null ) {
-        strs.add(line);
-      }
-    } catch ( IOException ex ) {
-      ex.printStackTrace();
-    }
-    return strs;
+    fileIo.doSave(filename, ws);
   }
 }

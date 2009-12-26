@@ -16,7 +16,7 @@ public class FeedItem {
   private List<Tag> tags = new ArrayList<Tag>();
   private long timestamp;
   private String link;
-  private String summary;
+  private String summary = "";
 
   public FeedItem() {
   }
@@ -93,5 +93,17 @@ public class FeedItem {
       String s = nn.getFirstChild().getNodeValue();
       setSummary(s);
     }
+  }
+
+  public boolean isExistTag(Tag tag) {
+    for ( Tag tag1 : tags ) {
+      String name = tag1.getSmartName();
+      if ( name != null ) {
+        if ( name.equals(tag.getSmartName()) ) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
