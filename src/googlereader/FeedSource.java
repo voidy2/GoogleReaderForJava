@@ -84,8 +84,9 @@ public class FeedSource {
 
   public boolean isExistTag(Tag tag) {
     for ( Tag tag1 : tags ) {
-      if ( tag1.getName() != null ) {
-        if ( tag1.getName().equals(tag.getName()) ) {
+      String name = tag1.getSmartName();
+      if ( name != null ) {
+        if ( name.equals(tag.getSmartName()) ) {
           return true;
         }
       }

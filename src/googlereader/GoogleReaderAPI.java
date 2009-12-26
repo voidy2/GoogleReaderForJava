@@ -191,7 +191,7 @@ public class GoogleReaderAPI {
    * @param ap 付加指定するパラメータ
    * @return 取得したxml
    */
-  public Node doGetLabelFeed(Tag tag, AtomParameters ap) {
+  public Element doGetLabelFeed(Tag tag, AtomParameters ap) {
     try {
       String tagName = URLEncoder.encode(tag.getName(), "UTF-8");
       Element root = getAtomFeed(tagName, ap);

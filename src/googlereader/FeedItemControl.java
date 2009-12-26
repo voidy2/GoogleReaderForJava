@@ -1,6 +1,6 @@
 package googlereader;
 
-import org.w3c.dom.Node;
+import java.util.List;
 
 /**
  * フィードを管理するクラス
@@ -18,6 +18,10 @@ public class FeedItemControl {
   }
 
   public void saveFeedItems(Tag tag) {
-    Node xml = gapi.doGetLabelFeed(tag, ap);
+    List<FeedSource> flist = gapi.getFsList().getFsList(tag);
+    System.out.println(flist.size());
+    for ( FeedSource feedSource : flist ) {
+      System.out.println(feedSource.getTitle());
+    }
   }
 }
