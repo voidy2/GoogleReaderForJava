@@ -90,6 +90,15 @@ public class FeedSource {
     return null;
   }
 
+  public String getStateUrl() {
+    try {
+      return URLEncoder.encode(url, "UTF-8").replaceFirst("feed%2F", "feed/");
+    } catch ( UnsupportedEncodingException ex ) {
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
   public void setUrl(String url) {
     this.url = url;
   }

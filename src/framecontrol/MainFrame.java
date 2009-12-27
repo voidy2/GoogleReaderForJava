@@ -1,13 +1,22 @@
 package framecontrol;
 
+import googlereader.FeedItem;
+import googlereader.FeedItemControl;
+import googlereader.FeedSource;
 import googlereader.GoogleReaderAPI;
+import googlereader.Tag;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -17,6 +26,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 
 /**
  *
@@ -24,7 +34,7 @@ import javax.swing.event.TreeSelectionListener;
  */
 @SuppressWarnings( "serial" )
 public class MainFrame extends JFrame
-        implements KeyListener, ListSelectionListener, TreeSelectionListener {
+  implements KeyListener, ListSelectionListener, TreeSelectionListener {
 
   private static final String mac = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
   private static final String metal = "javax.swing.plaf.metal.MetalLookAndFeel";
@@ -35,13 +45,24 @@ public class MainFrame extends JFrame
   JList lst;
   JEditorPane ta;
   LabelTree tree;
+  int treeSelect = 0;
+  JScrollPane sp;
+  JScrollPane sp2;
+  JScrollPane sp3;
   GoogleReaderAPI gapi;
   int select;
-  String[] data = { "ListA", "ListB", "ListC", "ListD", "ListE", "ListF", "ListG", "ListH" };
-  String[] text = { "ListA", "ListB", "テスト\nListC", "ListD", "ListE", "ListF", "ListG", "ListH" };
+  Vector<FeedItem> feedItems;
+  FeedItemControl fItemCon;
 
   public MainFrame(GoogleReaderAPI gapi) {
     this.gapi = gapi;
+    this.fItemCon = new FeedItemControl(gapi);
+    Collection<Tag> tags = gapi.getFsList().getTagList().values();
+    for ( Tag tag : tags ) {
+      if ( !tag.isState() ) {
+	fItemCon.readFeedItems(tag);
+      }
+    }
     String currentLookAndFeel = gtk;
     try {
       UIManager.setLookAndFeel(currentLookAndFeel);
@@ -53,25 +74,26 @@ public class MainFrame extends JFrame
     setLayout(new GridLayout());
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setTitle("KeyListenerTest");
-    JScrollPane sp = new JScrollPane();
-    lst = new JList(data);
+    sp = new JScrollPane();
+    lst = new JList();
     sp.getViewport().setView(lst);
 
     this.addKeyListener(this);
     lst.addListSelectionListener(this);
     lst.addKeyListener(this);
-    ta = new JEditorPane("text/html","");
+    ta = new JEditorPane("text/html", "");
     ta.setBackground(Color.WHITE);
 
     ta.addKeyListener(this);
-    JScrollPane sp2 = new JScrollPane();
+    sp2 = new JScrollPane();
     sp2.getViewport().setView(ta);
 
 
 
     tree = new LabelTree(gapi);
     tree.addTreeSelectionListener(this);
-    JScrollPane sp3 = new JScrollPane();
+    tree.addKeyListener(this);
+    sp3 = new JScrollPane();
     sp3.getViewport().setView(tree);
 
     JSplitPane splitpaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
@@ -83,7 +105,7 @@ public class MainFrame extends JFrame
     splitpaneH.setRightComponent(splitpaneV);
     splitpaneH.setContinuousLayout(true);
     add(splitpaneH);
-    setBounds(100, 100, 1000,700);
+    setBounds(100, 100, 1000, 700);
     setVisible(true);
   }
 
@@ -96,38 +118,67 @@ public class MainFrame extends JFrame
   }
 
   public void keyTyped(KeyEvent e) {
-    // System.out.println("Type: " + e.getKeyChar());
+    System.out.println("Type: " + e.getKeyChar());
     char getKey = e.getKeyChar();
     int current = lst.getSelectedIndex();
-    if ( getKey == 'N' ) {
-      if ( current != data.length - 1 ) {
-        select = ++current;
-      } else {
-        select = 0;
-      }
-      lst.setSelectedValue(data[select], true);
-    } else if ( getKey == 'P' ) {
-      if ( current > 0 ) {
-        select = --current;
-      } else {
-        select = data.length - 1;
-      }
-      lst.setSelectedValue(data[select], true);
+    switch ( getKey ) {
+      case 'j':
+	if ( feedItems == null ) {
+	  return;
+	}
+	if ( current != feedItems.size() - 1 ) {
+	  select = ++current;
+	}
+	lst.setSelectedValue(feedItems.get(select), true);
+	break;
+      case 'k':
+	if ( feedItems == null ) {
+	  return;
+	}
+	if ( current > 0 ) {
+	  select = --current;
+	}
+	lst.setSelectedValue(feedItems.get(select), true);
+	break;
+      case 'N':
+	if ( tree.isCollapsed(treeSelect) ) {
+	  tree.expandRow(treeSelect);
+	}
+	tree.setSelectionRow(++treeSelect);
+	break;
+      case 'P':
+	tree.setSelectionRow(--treeSelect);
+	break;
     }
   }
 
   public void valueChanged(ListSelectionEvent e) {
     JList l = ( JList ) e.getSource();
-    select = l.getSelectedIndex();
-    ta.setText(text[select]);
+    FeedItem item = ( FeedItem ) l.getSelectedValue();
+    if ( item != null ) {
+      ta.setText(item.getSummary());
+    }
   }
 
   public void valueChanged(TreeSelectionEvent e) {
     LabelTree tree1 = ( LabelTree ) e.getSource();
-    LabelTreeNode node = (LabelTreeNode) tree1.getLastSelectedPathComponent();
-    if(node!=null){
-      ta.setText(""+node.getFeedSource().getItems().get(0).getSummary());
+    LabelTreeNode node = ( LabelTreeNode ) tree1.getLastSelectedPathComponent();
+    if ( node.isLeaf() ) {
+      if ( node != null ) {
+	ta.setText("" + node.getFeedSource().getItems().get(0).getSummary());
+	showItems(node.getFeedSource());
+	sp.getVerticalScrollBar().setValue(0);
+      }
     }
+  }
+
+  private void showItems(FeedSource fs) {
+    List<FeedItem> fItems = fs.getItems();
+    feedItems = new Vector<FeedItem>();
+    for ( FeedItem item : fItems ) {
+      feedItems.add(item);
+    }
+    lst.setListData(feedItems);
   }
 }
 

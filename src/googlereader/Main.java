@@ -38,8 +38,8 @@ public class Main {
     //gapi.getFsList().saveFavicons();
     //購読リストと未読数を保存するべき
     FeedItemControl fic = new FeedItemControl(gapi);
-    fic.getFeedItems(new Tag(Const.ATOM_PREFIXE_LABEL + "情報"));
-    //fic.readFeedItems(new Tag(Const.ATOM_PREFIXE_LABEL + "情報"));
+    //fic.getFeedItems(new Tag(Const.ATOM_PREFIXE_LABEL + "情報"));
+
 
     new framecontrol.MainFrame(gapi);
   }

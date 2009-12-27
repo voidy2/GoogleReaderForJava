@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import stringutils.StringUtils;
 
 /**
  * フィードを管理するクラス
@@ -28,9 +29,12 @@ public class FeedItemControl {
     List<FeedSource> flist = gapi.getFsList().getFsList(tag);
     for ( FeedSource feedSource : flist ) {
       int uc = feedSource.getUnreadCount();
+      System.out.println(feedSource.getEncodedUrl());
+      if(uc > 500){
+	uc = 500;
+      }
       ap.setCount(uc);
       ap.setExclude_target(new Tag(Const.ATOM_STATE_READ));
-      ap.setContinuation(continuation);
       Element xml = gapi.getAtomFeed(feedSource.getEncodedUrl(), ap);
       loadXml(xml, feedSource);
     }
@@ -39,18 +43,19 @@ public class FeedItemControl {
   public void saveFeedItems(Tag tag) {
     List<FeedSource> flist = gapi.getFsList().getFsList(tag);
     for ( FeedSource feedSource : flist ) {
+      System.err.println(feedSource.getItems().size());
       List<FeedItem> fItems = feedSource.getItems();
       int uc = fItems.size();
       ArrayList<String> ws = new ArrayList<String>();
       String filename = feedSource.getEncodedUrl() + ".log";
       ws.add(uc + "\n\n");
       for ( FeedItem fi : fItems ) {
-	String w = fi.getTitle() + "\n";
+	String w = StringUtils.avoidWaste(fi.getTitle()) + "\n";
 	w += fi.getTimestamp() + "\n";
 	w += fi.getLink() + "\n";
-	w += "[[\n";
+	w += "[[---\n";
 	w += fi.getSummary() + "\n";
-	w += "]]\n";
+	w += "---]]\n";
 	List<Tag> tags = fi.getTags();
 	int size = tags.size();
 	for ( int i = 0; i < size; i++ ) {
@@ -100,7 +105,11 @@ public class FeedItemControl {
 	fItem.setTitle(line);
 	break;
       case 1:
-	fItem.setTimestamp(Long.parseLong(line));
+	try{
+	  fItem.setTimestamp(Long.parseLong(line));
+	} catch(Exception e){
+	  	System.out.println(line);
+	}
 	break;
       case 2:
 	fItem.setLink(line);
@@ -127,11 +136,11 @@ public class FeedItemControl {
 	fItem = new FeedItem();
       }
       if ( x % 5 == 3 ) {
-	if ( line.equals("]]") ) {
+	if ( line.equals("---]]") ) {
 	  readCaseSetSubs(3, content, fItem);
 	  content = "";
 	} else {
-	  if ( !line.equals("[[") ) {
+	  if ( !line.equals("[[---") ) {
 	    content += line;
 	  }
 	  continue;

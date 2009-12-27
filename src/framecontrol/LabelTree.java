@@ -58,43 +58,51 @@ public class LabelTree extends JTree {
     FeedSourceList fs = gapi.getFsList();
     Collection<Tag> labels = fs.getTagList().values();
     LabelTreeNode root = new LabelTreeNode(
-            "GoogleReader("+gapi.getFsList().getUnreadCount()+")");
+      "GoogleReader(" + gapi.getFsList().getUnreadCount() + ")");
     root.setOpenIcon(OpenIcon);
     root.setClosedIcon(ClosedIcon);
     for ( Tag label : labels ) {
       if ( label.isState() ) {
-        continue;
+	continue;
       }
       String labelName = label.getSmartName();
       int uc = label.getUnreadCount();
+      if ( uc == 0 ) {
+	continue;
+      }
       System.err.println(labelName + " : 読み込み完了");
-      LabelTreeNode tree = new LabelTreeNode(labelName+"("+uc+")");
+      LabelTreeNode tree = new LabelTreeNode(labelName + "(" + uc + ")");
       tree.setOpenIcon(OpenIcon);
       tree.setClosedIcon(ClosedIcon);
       List<FeedSource> feeds = fs.getFsList(new Tag(label.getName()));
       LabelTreeNode leaf = null;
-      for ( FeedSource feed: feeds ) {
-        String title = feed.getTitle();
-        int ucf = feed.getUnreadCount();
-        leaf = new LabelTreeNode("(" + ucf + ")" + title);
+      for ( FeedSource feed : feeds ) {
+	String title = feed.getTitle();
+	int ucf = feed.getUnreadCount();
+	if ( ucf == 0 ) {
+	  continue;
+	}
+	leaf = new LabelTreeNode("(" + ucf + ")" + title);
 	leaf.setFeedSource(feed);
-        leaf.setLeafIcon(ImageGet.readImage(feed.getHtmlUrl()));
-        tree.add(leaf);
+	leaf.setLeafIcon(ImageGet.readImage(feed.getHtmlUrl()));
+	tree.add(leaf);
       }
       root.add(tree);
     }
     LabelTreeNode tree = new LabelTreeNode("(empty)");
     root.add(tree);
-    ArrayList<String> emptyFeeds = fs.readLabelFeed("empty");
+    List<FeedSource> emptyFeeds = fs.getFsList(new Tag("empty"));
     LabelTreeNode leaf = null;
-    for ( int i = 0; i < emptyFeeds.size(); ++i ) {
-      String feed = emptyFeeds.get(i);
-      if ( i % 2 == 0 ) {
-        leaf = new LabelTreeNode(feed);
-      } else {
-        leaf.setLeafIcon(ImageGet.readImage(feed));
-        tree.add(leaf);
+    for ( FeedSource feed : emptyFeeds ) {
+      String title = feed.getTitle();
+      int ucf = feed.getUnreadCount();
+      if ( ucf == 0 ) {
+	continue;
       }
+      leaf = new LabelTreeNode("(" + ucf + ")" + title);
+      leaf.setFeedSource(feed);
+      leaf.setLeafIcon(ImageGet.readImage(feed.getHtmlUrl()));
+      tree.add(leaf);
     }
 
     DefaultTreeModel model = new DefaultTreeModel(root);
