@@ -47,7 +47,6 @@ public class LabelTree extends JTree {
       LeafIcon = new ImageIcon(rss.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
       OpenIcon = new ImageIcon(folderOpen.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
       ClosedIcon = new ImageIcon(folder.getScaledInstance(iconsize, iconsize, Image.SCALE_SMOOTH));
-      setDoubleBuffered(true);
       doMakeLabelTree();
     } catch ( IOException ex ) {
       Logger.getLogger(LabelTree.class.getName()).log(Level.SEVERE, null, ex);

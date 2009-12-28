@@ -53,6 +53,9 @@ public class MainFrame extends JFrame
   int select;
   Vector<FeedItem> feedItems;
   FeedItemControl fItemCon;
+  ContentView cv;
+  JSplitPane splitpaneH;
+  JSplitPane splitpaneV;
 
   public MainFrame(GoogleReaderAPI gapi) {
     this.gapi = gapi;
@@ -96,10 +99,11 @@ public class MainFrame extends JFrame
     sp3 = new JScrollPane();
     sp3.getViewport().setView(tree);
 
-    JSplitPane splitpaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
-    JSplitPane splitpaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+    splitpaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+    splitpaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
     splitpaneV.setTopComponent(sp);
-    splitpaneV.setBottomComponent(sp2);
+    cv = new ContentView();
+    splitpaneV.setBottomComponent(cv);
     splitpaneV.setContinuousLayout(true);
     splitpaneH.setLeftComponent(sp3);
     splitpaneH.setRightComponent(splitpaneV);
@@ -156,7 +160,9 @@ public class MainFrame extends JFrame
     JList l = ( JList ) e.getSource();
     FeedItem item = ( FeedItem ) l.getSelectedValue();
     if ( item != null ) {
-      ta.setText(item.getSummary());
+      //ta.setText(item.getSummary());
+      System.out.println(l.getSelectedIndex());
+      cv.viewContents(l.getSelectedIndex());
     }
   }
 
@@ -165,9 +171,10 @@ public class MainFrame extends JFrame
     LabelTreeNode node = ( LabelTreeNode ) tree1.getLastSelectedPathComponent();
     if ( node.isLeaf() ) {
       if ( node != null ) {
-	ta.setText("" + node.getFeedSource().getItems().get(0).getSummary());
+	//ta.setText("" + node.getFeedSource().getItems().get(0).getSummary());
 	showItems(node.getFeedSource());
 	sp.getVerticalScrollBar().setValue(0);
+	cv.setContents(node.getFeedSource());
       }
     }
   }
