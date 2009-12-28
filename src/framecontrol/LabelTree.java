@@ -70,7 +70,7 @@ public class LabelTree extends JTree {
 	continue;
       }
       System.err.println(labelName + " : 読み込み完了");
-      LabelTreeNode tree = new LabelTreeNode(labelName + "(" + uc + ")");
+      LabelTreeNode tree = new LabelTreeNode(" " + labelName + "(" + uc + ")");
       tree.setOpenIcon(OpenIcon);
       tree.setClosedIcon(ClosedIcon);
       List<FeedSource> feeds = fs.getFsList(new Tag(label.getName()));
@@ -81,14 +81,14 @@ public class LabelTree extends JTree {
 	if ( ucf == 0 ) {
 	  continue;
 	}
-	leaf = new LabelTreeNode("(" + ucf + ")" + title);
+	leaf = new LabelTreeNode(" (" + ucf + ")" + title);
 	leaf.setFeedSource(feed);
 	leaf.setLeafIcon(ImageGet.readImage(feed.getHtmlUrl()));
 	tree.add(leaf);
       }
       root.add(tree);
     }
-    LabelTreeNode tree = new LabelTreeNode("(empty)");
+    LabelTreeNode tree = new LabelTreeNode(" (empty)");
     root.add(tree);
     List<FeedSource> emptyFeeds = fs.getFsList(new Tag("empty"));
     LabelTreeNode leaf = null;

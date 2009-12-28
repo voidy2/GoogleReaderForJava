@@ -2,8 +2,6 @@ package framecontrol;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
 
 /**
@@ -23,11 +21,11 @@ public class ItemTitleLabel extends JLabel implements Cloneable {
   }
 
   @Override
-  public ItemTitleLabel clone() {
+  protected ItemTitleLabel clone() {
     try {
       return ( ItemTitleLabel ) super.clone();
     } catch ( CloneNotSupportedException ex ) {
-      Logger.getLogger(ItemTitleLabel.class.getName()).log(Level.SEVERE, null, ex);
+      System.out.println(ex);
     }
     return null;
   }

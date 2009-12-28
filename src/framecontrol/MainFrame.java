@@ -9,9 +9,15 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.*;
+import java.security.KeyStore;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,6 +26,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -43,11 +50,9 @@ public class MainFrame extends JFrame
   private static final String gtk = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
   private static final String nimbus = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
   JList lst;
-  JEditorPane ta;
   LabelTree tree;
   int treeSelect = 0;
   JScrollPane sp;
-  JScrollPane sp2;
   JScrollPane sp3;
   GoogleReaderAPI gapi;
   int select;
@@ -66,6 +71,8 @@ public class MainFrame extends JFrame
 	fItemCon.readFeedItems(tag);
       }
     }
+    //saveAllとかreadAllとか作りたい
+    fItemCon.readFeedItems(new Tag("empty"));
     String currentLookAndFeel = gtk;
     try {
       UIManager.setLookAndFeel(currentLookAndFeel);
@@ -84,18 +91,19 @@ public class MainFrame extends JFrame
     this.addKeyListener(this);
     lst.addListSelectionListener(this);
     lst.addKeyListener(this);
-    ta = new JEditorPane("text/html", "");
-    ta.setBackground(Color.WHITE);
-
-    ta.addKeyListener(this);
-    sp2 = new JScrollPane();
-    sp2.getViewport().setView(ta);
-
-
 
     tree = new LabelTree(gapi);
     tree.addTreeSelectionListener(this);
     tree.addKeyListener(this);
+
+    InputMap imc = tree.getInputMap();
+    KeyStroke upKey = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+    KeyStroke downKey = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+    KeyStroke rightKey = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
+    imc.put(KeyStroke.getKeyStroke('P'),  imc.get(upKey));
+    imc.put(KeyStroke.getKeyStroke('N'), imc.get(downKey));
+    imc.put(KeyStroke.getKeyStroke(KeyEvent.VK_O,InputEvent.CTRL_DOWN_MASK), imc.get(rightKey));
+       System.out.println(Arrays.toString(tree.getRegisteredKeyStrokes()));
     sp3 = new JScrollPane();
     sp3.getViewport().setView(tree);
 
@@ -121,8 +129,8 @@ public class MainFrame extends JFrame
     // System.out.println("Release: " + KeyEvent.getKeyText(e.getKeyCode()));
   }
 
-  public void keyTyped(KeyEvent e) {
-    System.out.println("Type: " + e.getKeyChar());
+  public synchronized void keyTyped(KeyEvent e) {
+    //System.out.println("Type: " + e.getKeyChar());
     char getKey = e.getKeyChar();
     int current = lst.getSelectedIndex();
     switch ( getKey ) {
@@ -145,13 +153,16 @@ public class MainFrame extends JFrame
 	lst.setSelectedValue(feedItems.get(select), true);
 	break;
       case 'N':
-	if ( tree.isCollapsed(treeSelect) ) {
-	  tree.expandRow(treeSelect);
-	}
-	tree.setSelectionRow(++treeSelect);
+	treeSelect = tree.getSelectionRows()[0];
+	System.err.println("current  " + treeSelect);
+	tree.setSelectionRow(treeSelect);
+	System.err.println(treeSelect);
 	break;
       case 'P':
-	tree.setSelectionRow(--treeSelect);
+	treeSelect = tree.getSelectionRows()[0];
+	System.err.println("current  " + treeSelect);
+	tree.setSelectionRow(treeSelect);
+	System.err.println(treeSelect);
 	break;
     }
   }
@@ -160,18 +171,26 @@ public class MainFrame extends JFrame
     JList l = ( JList ) e.getSource();
     FeedItem item = ( FeedItem ) l.getSelectedValue();
     if ( item != null ) {
+      select = l.getSelectedIndex();
       //ta.setText(item.getSummary());
-      System.out.println(l.getSelectedIndex());
+      //System.out.println(l.getSelectedIndex());
       cv.viewContents(l.getSelectedIndex());
     }
   }
 
-  public void valueChanged(TreeSelectionEvent e) {
+  public synchronized void valueChanged(TreeSelectionEvent e) {
+
     LabelTree tree1 = ( LabelTree ) e.getSource();
+    System.out.println("now : " + tree.getRowCount());
+    System.out.println("current : " + tree.getSelectionRows()[0]);
+
     LabelTreeNode node = ( LabelTreeNode ) tree1.getLastSelectedPathComponent();
+    //      System.out.println();
     if ( node.isLeaf() ) {
       if ( node != null ) {
 	//ta.setText("" + node.getFeedSource().getItems().get(0).getSummary());
+	select = 0;
+
 	showItems(node.getFeedSource());
 	sp.getVerticalScrollBar().setValue(0);
 	cv.setContents(node.getFeedSource());

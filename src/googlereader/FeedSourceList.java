@@ -175,8 +175,8 @@ public class FeedSourceList {
 	if ( feedSource.isExistTag(label) ) {
 	  labelFsList.add(feedSource);
 	}
-      } else {
-	if ( label.getName().equals("empty") ) {
+      }else{
+	if( label.getName().equals("empty") ) {
 	  labelFsList.add(feedSource);
 	}
       }
@@ -275,6 +275,9 @@ public class FeedSourceList {
 	fs.setUnreadCount(count);
 	break;
       case 5:
+	if(line.equals("")){
+	  break;
+	}
 	String[] tags = line.split(",");
 	for ( String tag : tags ) {
 	  fs.getTags().add(new Tag(tag));

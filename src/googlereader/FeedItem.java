@@ -109,6 +109,6 @@ public class FeedItem {
 
   @Override
   public String toString(){
-    return this.getTitle();
+    return " " + this.getTitle();
   }
 }

@@ -32,7 +32,7 @@ public class Tag {
 
   public boolean isState() {
     String[] sp = name.split("/");
-    if ( sp[2].equals("state") ) {
+    if ( sp.length > 4 && sp[2].equals("state") ) {
       return true;
     }
     return false;

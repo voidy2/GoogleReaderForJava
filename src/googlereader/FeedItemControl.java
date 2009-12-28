@@ -30,7 +30,7 @@ public class FeedItemControl {
     for ( FeedSource feedSource : flist ) {
       int uc = feedSource.getUnreadCount();
       System.out.println(feedSource.getEncodedUrl());
-      if(uc > 500){
+      if ( uc > 500 ) {
 	uc = 500;
       }
       ap.setCount(uc);
@@ -105,10 +105,10 @@ public class FeedItemControl {
 	fItem.setTitle(line);
 	break;
       case 1:
-	try{
+	try {
 	  fItem.setTimestamp(Long.parseLong(line));
-	} catch(Exception e){
-	  	System.out.println(line);
+	} catch ( Exception e ) {
+	  System.out.println(line);
 	}
 	break;
       case 2:
