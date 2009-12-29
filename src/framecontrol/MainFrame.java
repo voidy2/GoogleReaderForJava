@@ -154,15 +154,11 @@ public class MainFrame extends JFrame
 	break;
       case 'N':
 	treeSelect = tree.getSelectionRows()[0];
-	System.err.println("current  " + treeSelect);
 	tree.setSelectionRow(treeSelect);
-	System.err.println(treeSelect);
 	break;
       case 'P':
 	treeSelect = tree.getSelectionRows()[0];
-	System.err.println("current  " + treeSelect);
 	tree.setSelectionRow(treeSelect);
-	System.err.println(treeSelect);
 	break;
     }
   }
@@ -172,28 +168,20 @@ public class MainFrame extends JFrame
     FeedItem item = ( FeedItem ) l.getSelectedValue();
     if ( item != null ) {
       select = l.getSelectedIndex();
-      //ta.setText(item.getSummary());
-      //System.out.println(l.getSelectedIndex());
       cv.viewContents(l.getSelectedIndex());
     }
   }
 
   public synchronized void valueChanged(TreeSelectionEvent e) {
-
     LabelTree tree1 = ( LabelTree ) e.getSource();
-    System.out.println("now : " + tree.getRowCount());
-    System.out.println("current : " + tree.getSelectionRows()[0]);
-
     LabelTreeNode node = ( LabelTreeNode ) tree1.getLastSelectedPathComponent();
-    //      System.out.println();
     if ( node.isLeaf() ) {
       if ( node != null ) {
-	//ta.setText("" + node.getFeedSource().getItems().get(0).getSummary());
-	select = 0;
-
 	showItems(node.getFeedSource());
 	sp.getVerticalScrollBar().setValue(0);
 	cv.setContents(node.getFeedSource());
+	select = 0;
+	lst.setSelectedValue(feedItems.get(select), true);
       }
     }
   }

@@ -3,6 +3,7 @@ package googlereader;
 import fileio.FileIO;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import networkaccess.ImageGet;
 import org.w3c.dom.Node;
@@ -132,9 +133,8 @@ public class FeedSourceList {
 
   private void doSetUnreadCount() {
     int allUnreadCount = 0;
-    int size = fsList.size();
-    for ( int i = 0; i < size; ++i ) {
-      FeedSource feedSource = fsList.get(i);
+    for ( Iterator<FeedSource> it = fsList.iterator(); it.hasNext(); ) {
+      FeedSource feedSource = it.next();
       int count = 0;
       if ( unreadMap.containsKey(feedSource.getUrl()) ) {
 	count = unreadMap.get(feedSource.getUrl());
@@ -144,7 +144,6 @@ public class FeedSourceList {
       feedSource.setUnreadCount(count);
       allUnreadCount += count;
     }
-    size = unreadMap.size();
     for ( String s : unreadMap.keySet() ) {
       if ( s.substring(0, 4).equals("user") ) {
 	int count = unreadMap.get(s);
@@ -294,10 +293,10 @@ public class FeedSourceList {
       w += fs.getHtmlUrl() + "\n";
       w += fs.getSortId() + "\n";
       w += fs.getUnreadCount() + "\n";
-      int size = fs.getTags().size();
-      for ( int i = 0; i < size; i++ ) {
-	w += fs.getTags().get(i).getName();
-	if ( i != size - 1 ) {
+      for ( Iterator<Tag> it = fs.getTags().iterator(); it.hasNext(); ) {
+	Tag tag = it.next();
+	w += tag.getName();
+	if( it.hasNext() ){
 	  w += ",";
 	}
       }

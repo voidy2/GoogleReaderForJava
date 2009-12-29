@@ -2,6 +2,7 @@ package googlereader;
 
 import fileio.FileIO;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,10 +58,10 @@ public class FeedItemControl {
 	w += fi.getSummary() + "\n";
 	w += "---]]\n";
 	List<Tag> tags = fi.getTags();
-	int size = tags.size();
-	for ( int i = 0; i < size; i++ ) {
-	  w += tags.get(i).getName();
-	  if ( i != size - 1 ) {
+	for ( Iterator<Tag> it = tags.iterator(); it.hasNext(); ) {
+	  Tag tag1 = it.next();
+	  w += tag1.getName();
+	  if ( it.hasNext() ) {
 	    w += ",";
 	  }
 	}

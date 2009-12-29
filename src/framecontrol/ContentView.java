@@ -3,19 +3,12 @@ package framecontrol;
 import googlereader.FeedItem;
 import googlereader.FeedSource;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 
 /**
  *
@@ -44,12 +37,11 @@ public class ContentView extends JPanel {
     this.fs = fs;
     titleBars = new ArrayList<ItemTitleLabel>();
     List<FeedItem> fiList = fs.getItems();
-    int length = fiList.size();
     // if(length > 10){
     //  length = 10;
     // }
-    for ( int i = 0; i < length; i++ ) {
-      FeedItem feedItem = fiList.get(i);
+    for ( Iterator<FeedItem> it = fiList.iterator(); it.hasNext(); ) {
+      FeedItem feedItem = it.next();
       String title = feedItem.getTitle();
       ItemTitleLabel newTitle = new ItemTitleLabel(title);
       titleBars.add(newTitle);
