@@ -21,9 +21,15 @@ public class NetworkAccess {
   String headerKey, headerValue;
   String reqestMethod;
   String param;
+  HttpURLConnection con;
 
   public NetworkAccess(String url, String reqestMethod, String param) {
     this.url = url;
+    try {
+        this.con = ( HttpURLConnection ) new URL(url).openConnection();
+    } catch (Exception e) {
+
+    }
     this.reqestMethod = reqestMethod;
     this.param = param;
   }
@@ -31,15 +37,24 @@ public class NetworkAccess {
   public NetworkAccess(String url, String reqestMethod, String param,
           String headerKey, String headerValue) {
     this.url = url;
+    try {
+        this.con = ( HttpURLConnection ) new URL(url).openConnection();
+    } catch (Exception e) {
+
+    }
     this.headerKey = headerKey;
     this.headerValue = headerValue;
     this.reqestMethod = reqestMethod;
     this.param = param;
   }
 
+  public NetworkAccess setRequestProperty(String key, String value) {
+    this.con.setRequestProperty(key, value);
+    return this;
+  }
+
   public InputStream access() {
     try {
-      HttpURLConnection con = ( HttpURLConnection ) new URL(url).openConnection();
       if ( headerKey != null ) {
         con.setRequestProperty(headerKey, headerValue);
       }
