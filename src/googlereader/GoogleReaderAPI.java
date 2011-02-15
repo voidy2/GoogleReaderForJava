@@ -26,6 +26,7 @@ public class GoogleReaderAPI {
   private String userId;
   private String password;
   private String sid;
+  private String authToken;
   private String t_token;
   private FeedSourceList fsList;
 
@@ -44,14 +45,14 @@ public class GoogleReaderAPI {
    * コンストラクタから呼ばれるログイン処理(SIDとTトークンの設定)
    */
   private void loginAuth() {
-    this.setSid();
+    this.setSidAndAuthToken();
     this.setT_Token();
   }
 
   /**
    * SIDを取得して設定する
    */
-  private void setSid() {
+  private void setSidAndAuthToken() {
     try {
       String[] params = { "Email=" + URLEncoder.encode(userId, "UTF-8"),
                           "Passwd=" + URLEncoder.encode(password, "UTF-8"),
@@ -65,7 +66,8 @@ public class GoogleReaderAPI {
         String response = line.substring(0, 4);
         if ( response.equals("SID=") ) {
           this.sid = line.substring(4);
-          break;
+        } else if ( response.equals("Auth") ) {
+          this.authToken = line.substring(5);
         }
       }
       in.close();
@@ -83,7 +85,9 @@ public class GoogleReaderAPI {
     try {
       String url = URI_PREFIXE_API + API_TOKEN;
       NetworkAccess na =
-                    new NetworkAccess(url, "GET", null, "Cookie", "SID=" + sid);
+                    new NetworkAccess(url, "GET", null);
+      na = na.setRequestProperty("Cookie", "SID=" + sid)
+          .setRequestProperty("Authorization", "GoogleLogin auth=" + authToken);
       BufferedReader in =
                      new BufferedReader(new InputStreamReader(na.access()));
       String line;
@@ -112,7 +116,8 @@ public class GoogleReaderAPI {
   private Element getFeed(String url) {
     try {
       NetworkAccess na = new NetworkAccess(url, "GET", null,
-              "Cookie", "SID=" + sid + ";T=" + t_token);
+              "Cookie", "SID=" + sid + ";T=" + t_token)
+          .setRequestProperty("Authorization", "GoogleLogin auth=" + authToken);
       DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = dbfactory.newDocumentBuilder();
       Document doc = builder.parse(na.access());
@@ -194,7 +199,8 @@ public class GoogleReaderAPI {
       String params = StringUtils.join(postArgs, "&");
       String url = URI_PREFIXE_API + target;
       NetworkAccess na = new NetworkAccess(url, "POST",
-              params, "Cookie", "SID=" + sid + ";T=" + t_token);
+              params, "Cookie", "SID=" + sid + ";T=" + t_token)
+          .setRequestProperty("Authorization", "GoogleLogin auth=" + authToken);
       BufferedReader br = new BufferedReader(
               new InputStreamReader(na.access()));
       String returnStr = br.readLine();
